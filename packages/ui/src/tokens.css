@@ -1,0 +1,150 @@
+/* T041: design-tokenit CSS:nä (TS-pari: tokens.ts + theme.ts, sama nimiavaruus
+   --lifeos-*). Light on oletus (:root); dark ylikirjoittaa
+   [data-theme="dark"]:ssa (T043: provider + FOUC-esto index.html:ssä).
+   Collectible-teemat (§26) käyttävät samaa mekanismia myöhemmin
+   (uusi data-theme-arvo + ylikirjoituslohko, ei rakenteen muutosta).
+   Kontrastit mitattu (WCAG 2.2 AA): kaikki teksti ≥ 4.5:1, ks. tokens.ts.
+   Fontti: Hanken Grotesk variable, itse isännöity (@fontsource-variable,
+   latin-ext mukana); ei ulkoista fontti-CDN:ää (CSP + offline, brief §3). */
+
+:root {
+  color-scheme: light;
+
+  /* Väri / base (brief §2) */
+  --lifeos-color-bg: #edf1ea;
+  --lifeos-color-surface: #f7f9f5;
+  --lifeos-color-text: #16241d;
+  --lifeos-color-muted: #43564b;
+  --lifeos-color-brand: #1a2e22;
+  --lifeos-color-on-brand: #edf1ea;
+  --lifeos-color-brand-ink: #14211a;
+  --lifeos-color-accent: #476b4e;
+  --lifeos-color-link: #1e4d56;
+  --lifeos-color-border: #6f8474;
+
+  /* Väri / semantiikka (aina kolmikko bg+text+border) */
+  --lifeos-color-success-bg: #dde7dd;
+  --lifeos-color-success-text: #2c4b32;
+  --lifeos-color-success-border: #476b4e;
+  --lifeos-color-info-bg: #d8e7ea;
+  --lifeos-color-info-text: #1e4d56;
+  --lifeos-color-info-border: #2e6e7b;
+  --lifeos-color-warning-bg: #f1e5c3;
+  --lifeos-color-warning-text: #6b4d0a;
+  --lifeos-color-warning-border: #9a6b12;
+  --lifeos-color-danger-bg: #f3d9df;
+  --lifeos-color-danger-text: #7c2a3d;
+  --lifeos-color-danger-border: #a63a52;
+
+  /* Typografia (brief §3): yksi perhe, 1.25-asteikko, tabular-numerot */
+  --lifeos-font-family: "Hanken Grotesk Variable", "Hanken Grotesk", system-ui, sans-serif;
+  --lifeos-font-xs: 0.8rem;
+  --lifeos-font-sm: 0.9rem;
+  --lifeos-font-md: 1rem;
+  --lifeos-font-lg: 1.25rem;
+  --lifeos-font-xl: 1.563rem;
+  --lifeos-font-2xl: 1.953rem;
+  --lifeos-font-3xl: 2.441rem;
+  --lifeos-line-body: 1.55;
+  --lifeos-line-display: 1.15;
+  --lifeos-line-meta: 1.4;
+  --lifeos-measure: 68ch;
+
+  /* Spacing (4px-kanta), radius (10/14/20), elevation (3 tasoa) */
+  --lifeos-space-3xs: 0.125rem;
+  --lifeos-space-2xs: 0.25rem;
+  --lifeos-space-xs: 0.5rem;
+  --lifeos-space-sm: 0.75rem;
+  --lifeos-space-md: 1rem;
+  --lifeos-space-lg: 1.5rem;
+  --lifeos-space-xl: 2rem;
+  --lifeos-space-2xl: 3rem;
+  --lifeos-space-3xl: 4rem;
+  --lifeos-radius-control: 10px;
+  --lifeos-radius-card: 14px;
+  --lifeos-radius-sheet: 20px;
+  --lifeos-elevation-1: 0 1px 2px rgb(22 36 29 / 0.06);
+  --lifeos-elevation-2: 0 2px 8px rgb(22 36 29 / 0.08);
+  --lifeos-elevation-3: 0 8px 24px rgb(22 36 29 / 0.12);
+
+  /* Motion (§30), focus (§31), touch, breakpoint */
+  --lifeos-motion-fast: 120ms;
+  --lifeos-motion-base: 200ms;
+  --lifeos-motion-slow: 320ms;
+  --lifeos-motion-easing: ease-out;
+  --lifeos-focus-width: 2px;
+  --lifeos-focus-offset: 2px;
+  --lifeos-touch-min: 44px;
+  --lifeos-bp-desktop: 720px;
+}
+
+/* T043: OS-seuranta ilman tallennettua valintaa: selaimen dark-tila
+   valitsee dark-tokenit jo ennen Reactia (ei välähdystä). Eksplisiittinen
+   tallennettu valinta (data-theme light/dark, ks. themeScript) voittaa
+   tämän aina (spesifisyys: attribuuttiselektorit alla). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --lifeos-color-bg: #101915;
+    --lifeos-color-surface: #1a2e22;
+    --lifeos-color-text: #e9efe8;
+    --lifeos-color-muted: #a9bcac;
+    --lifeos-color-brand: #d8e4d6;
+    --lifeos-color-on-brand: #14211a;
+    --lifeos-color-brand-ink: #e9efe8;
+    --lifeos-color-accent: #8fb395;
+    --lifeos-color-link: #7fb6c2;
+    --lifeos-color-border: #5e8570;
+    --lifeos-color-success-bg: #1e3225;
+    --lifeos-color-success-text: #8fb395;
+    --lifeos-color-success-border: #8fb395;
+    --lifeos-color-info-bg: #173237;
+    --lifeos-color-info-text: #7fb6c2;
+    --lifeos-color-info-border: #7fb6c2;
+    --lifeos-color-warning-bg: #33270e;
+    --lifeos-color-warning-text: #d9a83c;
+    --lifeos-color-warning-border: #d9a83c;
+    --lifeos-color-danger-bg: #3a1e26;
+    --lifeos-color-danger-text: #d77e90;
+    --lifeos-color-danger-border: #d77e90;
+    --lifeos-elevation-1: none;
+    --lifeos-elevation-2: none;
+    --lifeos-elevation-3: none;
+  }
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Dark: tonaalinen elevation (vaaleampi pinta), ei varjoja */
+  --lifeos-color-bg: #101915;
+  --lifeos-color-surface: #1a2e22;
+  --lifeos-color-text: #e9efe8;
+  --lifeos-color-muted: #a9bcac;
+  --lifeos-color-brand: #d8e4d6;
+  --lifeos-color-on-brand: #14211a;
+  --lifeos-color-brand-ink: #e9efe8;
+  --lifeos-color-accent: #8fb395;
+  --lifeos-color-link: #7fb6c2;
+  --lifeos-color-border: #5e8570;
+  --lifeos-color-success-bg: #1e3225;
+  --lifeos-color-success-text: #8fb395;
+  --lifeos-color-success-border: #8fb395;
+  --lifeos-color-info-bg: #173237;
+  --lifeos-color-info-text: #7fb6c2;
+  --lifeos-color-info-border: #7fb6c2;
+  --lifeos-color-warning-bg: #33270e;
+  --lifeos-color-warning-text: #d9a83c;
+  --lifeos-color-warning-border: #d9a83c;
+  --lifeos-color-danger-bg: #3a1e26;
+  --lifeos-color-danger-text: #d77e90;
+  --lifeos-color-danger-border: #d77e90;
+  --lifeos-elevation-1: none;
+  --lifeos-elevation-2: none;
+  --lifeos-elevation-3: none;
+}

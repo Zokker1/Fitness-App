@@ -1,0 +1,1608 @@
+[data-ui="health-overview-page"] {
+  padding-block-end: 4.5rem;
+}
+
+[data-ui="content-column"]:has([data-ui="health-overview-page"][data-section="weight"]) main {
+  max-inline-size: none;
+}
+
+[data-ui="content-column"]:has([data-ui="health-overview-page"][data-section="weight"])
+  > [data-ui="aside"] {
+  display: none;
+}
+
+[data-ui="health-weight-page-title"],
+[data-ui="health-weight-metric-heading"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="health-weight-page-title"] [data-ui="icon"] {
+  inline-size: 1.5em;
+  block-size: 1.5em;
+  color: var(--lifeos-color-brand-ink);
+}
+
+[data-ui="health-weight-metric-heading"] [data-ui="icon"] {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  color: var(--lifeos-color-brand-ink);
+}
+
+[data-ui="health-overview-intro"] {
+  max-width: 42rem;
+  margin-block: 0 1.25rem;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-overview-intro"] p {
+  margin: 0.2rem 0 0;
+}
+
+[data-ui="health-overview-intro"][data-section="weight"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-lg);
+  max-width: none;
+  margin-block-end: var(--lifeos-space-lg);
+}
+
+[data-ui="health-overview-intro"][data-section="weight"] p {
+  max-width: 42rem;
+}
+
+[data-ui="health-overview-intro"][data-section="weight"] [data-variant="primary"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="health-section-selector"] [data-ui="segmented"] {
+  max-inline-size: none;
+}
+
+@media (max-width: 30rem) {
+  [data-ui="health-section-selector"] [data-ui="segmented-options"] {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+[data-testid="health-mood-checkin"] {
+  margin-block-end: var(--lifeos-space-lg);
+  border-inline-start: 3px solid var(--lifeos-color-accent);
+}
+
+[data-ui="health-checkin-intro"] {
+  max-width: 38rem;
+  margin: 0 0 var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-checkin-form"],
+[data-ui="health-checkin-symptom-form"],
+[data-ui="health-reflection-form"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-testid="health-evening-reflection"] {
+  margin-block-end: var(--lifeos-space-lg);
+}
+
+[data-testid="health-breathing-exercise"] {
+  margin-block-end: var(--lifeos-space-lg);
+}
+
+[data-ui="health-breathing-controls"] {
+  max-width: 28rem;
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="health-breathing-custom-editor"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  max-width: 42rem;
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="health-breathing-custom-editor"] > [data-ui="meta"],
+[data-ui="health-breathing-custom-editor"] > [data-ui="field-error"] {
+  margin: 0;
+}
+
+[data-ui="health-breathing-custom-phases"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="health-breathing-custom-phase"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: var(--lifeos-space-sm);
+  padding-block-end: var(--lifeos-space-sm);
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-breathing-custom-phase"] > button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+[data-ui="health-breathing-description"] {
+  max-width: 42rem;
+  margin: 0 0 var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-breathing-safety"] {
+  max-width: 42rem;
+  margin: 0 0 var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-breathing-warning"] {
+  margin: 0 0 var(--lifeos-space-md);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  border-inline-start: 3px solid var(--lifeos-color-warning-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-warning-bg);
+}
+
+[data-ui="health-breathing-timer"] {
+  display: grid;
+  justify-items: center;
+  gap: var(--lifeos-space-2xs);
+  margin-block: var(--lifeos-space-md);
+  padding: var(--lifeos-space-lg) var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-bg);
+  text-align: center;
+}
+
+[data-ui="health-breathing-orb-track"] {
+  display: grid;
+  inline-size: min(10rem, 62vw);
+  aspect-ratio: 1;
+  place-items: center;
+  margin-block-end: var(--lifeos-space-sm);
+}
+
+[data-ui="health-breathing-orb"] {
+  inline-size: 68%;
+  aspect-ratio: 1;
+  border: 2px solid var(--lifeos-color-accent);
+  border-radius: 50%;
+  background: var(--lifeos-color-accent);
+  box-shadow: 0 0 0 0.75rem color-mix(in srgb, var(--lifeos-color-accent) 14%, transparent);
+  transform: scale(0.72);
+  transform-origin: center;
+}
+
+[data-ui="health-breathing-orb"][data-static-scale="expanded"] {
+  transform: scale(1);
+}
+
+[data-ui="health-breathing-orb"][data-static-scale="compact"] {
+  transform: scale(0.72);
+}
+
+[data-ui="health-breathing-orb"][data-running="true"][data-phase-kind="inhale"][data-reduced-motion="false"] {
+  animation-name: health-breath-in;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+[data-ui="health-breathing-orb"][data-running="true"][data-phase-kind="exhale"][data-reduced-motion="false"] {
+  animation-name: health-breath-out;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+[data-ui="health-breathing-orb"][data-reduced-motion="true"][data-target-scale="expanded"] {
+  animation-name: none;
+  transform: scale(1);
+}
+
+[data-ui="health-breathing-orb"][data-reduced-motion="true"][data-target-scale="compact"] {
+  animation-name: none;
+  transform: scale(0.72);
+}
+
+@keyframes health-breath-in {
+  from {
+    transform: scale(0.72);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes health-breath-out {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(0.72);
+  }
+}
+
+[data-ui="health-breathing-timer"] p {
+  margin: 0;
+}
+
+[data-ui="health-breathing-phase"] {
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+}
+
+[data-ui="health-breathing-seconds"] {
+  font-size: var(--lifeos-font-2xl);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-breathing-feedback"] {
+  margin-block-end: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-breathing-feedback"] > summary {
+  display: flex;
+  min-block-size: var(--lifeos-touch-min);
+  align-items: center;
+  color: var(--lifeos-color-link);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+[data-ui="health-breathing-feedback-options"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  padding-block: var(--lifeos-space-xs) var(--lifeos-space-sm);
+}
+
+[data-ui="health-breathing-feedback-options"] > [data-ui="meta"] {
+  margin: 0;
+}
+
+[data-ui="health-breathing-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="health-breathing-status"] {
+  margin-block: var(--lifeos-space-sm) 0;
+  color: var(--lifeos-color-success-text);
+  font-weight: 600;
+}
+
+[data-ui="health-reflection-intro"] {
+  max-width: 42rem;
+  margin: 0 0 var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-reflection-form"] textarea[data-ui="input"] {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+[data-ui="health-reflection-prompts"] {
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-reflection-prompts"] summary {
+  display: flex;
+  min-block-size: var(--lifeos-touch-min);
+  align-items: center;
+  color: var(--lifeos-color-link);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+[data-ui="health-reflection-fields"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-xs) var(--lifeos-space-sm);
+}
+
+[data-ui="health-reflection-form"] > [data-ui="meta"],
+[data-ui="health-reflection-form"] > [data-ui="field-error"],
+[data-ui="health-reflection-form"] > [role="status"] {
+  margin-block: 0;
+}
+
+[data-ui="health-reflection-form"] > [role="status"] {
+  color: var(--lifeos-color-success-text);
+  font-weight: 600;
+}
+
+[data-ui="health-reflection-recent"] {
+  margin-block-start: var(--lifeos-space-lg);
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-reflection-recent"] h3 {
+  margin: 0 0 var(--lifeos-space-sm);
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="health-reflection-recent"] ol {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="health-reflection-recent"] li {
+  padding-block-start: var(--lifeos-space-sm);
+  border-block-start: 1px solid var(--lifeos-color-border);
+  overflow-wrap: anywhere;
+}
+
+[data-ui="health-reflection-recent"] time {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-reflection-recent"] p {
+  margin: var(--lifeos-space-xs) 0 0;
+  white-space: pre-wrap;
+}
+
+[data-ui="health-checkin-more"],
+[data-ui="health-checkin-symptom"] {
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-checkin-more"] summary,
+[data-ui="health-checkin-symptom"] summary {
+  display: flex;
+  min-block-size: var(--lifeos-touch-min);
+  align-items: center;
+  color: var(--lifeos-color-link);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+[data-ui="health-checkin-optional-scales"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-xs) var(--lifeos-space-sm);
+}
+
+[data-ui="health-checkin-form"] [role="status"],
+[data-ui="health-checkin-symptom-form"] [role="status"] {
+  margin: 0;
+  color: var(--lifeos-color-success-text);
+  font-weight: 600;
+}
+
+@media (min-width: 720px) {
+  [data-ui="health-checkin-optional-scales"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-ui="health-reflection-fields"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+[data-ui="health-overview-grid"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-md);
+  align-items: start;
+}
+
+[data-ui="health-overview-grid"] > * {
+  min-width: 0;
+}
+
+[data-ui="health-history-intro"] {
+  max-width: 42rem;
+  margin-block: 0 var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-history-search"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  max-width: 52rem;
+  margin-block-end: var(--lifeos-space-lg);
+}
+
+[data-ui="health-history-dates"],
+[data-ui="health-history-filters"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="health-history-date"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  font-weight: 600;
+}
+
+[data-ui="health-history-date"] input {
+  min-height: 2.75rem;
+  padding: var(--lifeos-space-xs) var(--lifeos-space-sm);
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  font: inherit;
+}
+
+[data-ui="health-history-search"] > [data-ui="field-error"] {
+  margin: 0;
+}
+
+[data-ui="health-history-result-count"] {
+  margin-block: 0 var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-history-empty"],
+[data-ui="health-history-error"] {
+  margin-block: var(--lifeos-space-md) 0;
+}
+
+[data-ui="health-history-days"] {
+  display: grid;
+  gap: var(--lifeos-space-lg);
+}
+
+[data-ui="health-history-days"] h3 {
+  margin: 0 0 var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-md);
+  text-transform: capitalize;
+}
+
+[data-ui="health-history-days"] ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="health-history-days"] li {
+  display: grid;
+  grid-template-columns: minmax(3.25rem, auto) minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  padding-block: var(--lifeos-space-sm);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-history-days"] li > time {
+  color: var(--lifeos-color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-history-item-copy"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  min-width: 0;
+}
+
+[data-ui="health-history-kind"],
+[data-ui="health-history-item-copy"] > span:last-child {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-weight-summary-values"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-lg);
+}
+
+[data-ui="health-weight-summary-values"] > [data-ui="card-metric"] {
+  min-width: 0;
+  margin: 0;
+  padding: var(--lifeos-space-md);
+}
+
+[data-ui="health-weight-summary-values"] [data-ui="card-metric-value"] {
+  overflow-wrap: anywhere;
+  font-size: clamp(1.125rem, 1.6vw, var(--lifeos-font-2xl));
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-weight-summary-values"] [data-priority="primary"] {
+  border-inline-start-width: 4px;
+}
+
+[data-ui="health-weight-default-note"] {
+  margin-block: 0 var(--lifeos-space-sm);
+}
+
+[data-ui="health-weight-details"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-lg);
+  align-items: stretch;
+}
+
+[data-testid="health-weight-target-card"] {
+  min-width: 0;
+}
+
+[data-ui="health-weight-target-progress"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  margin-block: var(--lifeos-space-md);
+  padding: var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="health-weight-target-progress"] [data-ui="meta"] {
+  margin: 0;
+}
+
+[data-ui="health-weight-plot"] {
+  margin: 0;
+}
+
+[data-testid="health-weight-history"] [data-ui="chart-frame"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: var(--lifeos-space-lg);
+}
+
+[data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="display-section"] {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+[data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="chart-unit"] {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+[data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="segmented"] {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  inline-size: min(100%, 34rem);
+  max-inline-size: none;
+  margin: 0;
+}
+
+[data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="chart-canvas"],
+[data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="chart-baseline"],
+[data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="chart-summary"] {
+  grid-column: 1 / -1;
+}
+
+[data-testid="health-weight-history"] [data-ui="segmented-options"] {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+[data-ui="health-weight-plot"] svg {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 12rem;
+  overflow: visible;
+}
+
+[data-ui="health-weight-plot"] svg text {
+  fill: var(--lifeos-color-muted);
+  font: 12px var(--lifeos-font-family);
+}
+
+[data-ui="health-weight-plot"] [data-ui="health-weight-y-tick"] line {
+  stroke: var(--lifeos-color-border);
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+}
+
+[data-ui="health-weight-plot"] [data-ui="health-weight-x-tick"] {
+  stroke: var(--lifeos-color-border);
+  stroke-dasharray: 2 5;
+  stroke-opacity: 0.3;
+  stroke-width: 1;
+}
+
+[data-ui="health-weight-plot"] [data-ui="health-weight-axis"] {
+  stroke: var(--lifeos-color-border);
+  stroke-width: 1.25;
+}
+
+[data-ui="health-weight-target-line"] line {
+  stroke: var(--lifeos-color-accent);
+  stroke-dasharray: 6 5;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+[data-ui="health-weight-target-line"] text {
+  fill: var(--lifeos-color-accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+[data-ui="health-weight-plot"] polyline {
+  fill: none;
+  stroke: var(--lifeos-color-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+[data-ui="health-weight-plot"] [data-ui="health-weight-area"] {
+  fill: color-mix(in srgb, var(--lifeos-color-accent) 13%, transparent);
+}
+
+[data-ui="health-weight-plot"] circle {
+  fill: var(--lifeos-color-accent);
+  stroke: var(--lifeos-color-surface);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+[data-ui="health-weight-plot"] figcaption {
+  margin-block-start: var(--lifeos-space-xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-weight-history-list"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+[data-testid="health-weight-history"] h3 {
+  margin: var(--lifeos-space-md) 0 var(--lifeos-space-2xs);
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="health-weight-history-list"] li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-xs) var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-xs);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-weight-history-entry"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--lifeos-space-xs) var(--lifeos-space-md);
+}
+
+[data-ui="health-weight-history-list"] time {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-weight-history-list"] strong {
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-weight-history-list"] [data-ui="meta"] {
+  margin: 0;
+}
+
+[data-ui="health-body-measure-values"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-md);
+  margin: 0 0 var(--lifeos-space-md);
+}
+
+[data-ui="health-body-measure-values"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: 0.875rem;
+}
+
+[data-ui="health-body-measure-values"] dd {
+  margin: 0.2rem 0 0;
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-body-measure-values"] [data-ui="meta"] {
+  margin-block: 0.2rem 0;
+}
+
+[data-ui="health-body-measure-editor"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-ui="health-temperature-values"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  margin: 0 0 var(--lifeos-space-md);
+}
+
+[data-ui="health-spo2-values"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  margin: 0 0 var(--lifeos-space-md);
+}
+
+[data-ui="health-blood-sugar-values"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  margin: 0 0 var(--lifeos-space-md);
+}
+
+[data-ui="health-custom-metric-list"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-lg);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="health-custom-metric-item"] {
+  min-width: 0;
+  padding-block-end: var(--lifeos-space-md);
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-custom-metric-item"]:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+[data-ui="health-custom-metric-item"] h3 {
+  margin: 0;
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="health-custom-metric-item"] [data-ui="meta"] {
+  margin-block: 0.2rem var(--lifeos-space-sm);
+}
+
+[data-ui="health-custom-metric-item"] dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  margin: 0;
+}
+
+[data-ui="health-custom-metric-item"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: 0.875rem;
+}
+
+[data-ui="health-custom-metric-item"] dd {
+  margin: 0.2rem 0 0;
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-custom-metric-selected"] {
+  margin: 0;
+}
+
+[data-ui="health-custom-metric-editor"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-ui="health-temperature-values"] dt,
+[data-ui="health-spo2-values"] dt,
+[data-ui="health-blood-sugar-values"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: 0.875rem;
+}
+
+[data-ui="health-temperature-values"] dd,
+[data-ui="health-spo2-values"] dd,
+[data-ui="health-blood-sugar-values"] dd {
+  margin: 0.2rem 0 0;
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-temperature-values"] [data-ui="meta"],
+[data-ui="health-spo2-values"] [data-ui="meta"],
+[data-ui="health-blood-sugar-values"] [data-ui="meta"] {
+  margin-block: 0.2rem 0;
+}
+
+[data-ui="health-temperature-editor"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-testid="health-temperature-form"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  max-width: 42rem;
+}
+
+[data-testid="health-spo2-form"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  max-width: 42rem;
+}
+
+[data-ui="health-blood-sugar-editor"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-testid="health-blood-sugar-form"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  max-width: 42rem;
+}
+
+[data-testid="health-custom-metric-form"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  max-width: 42rem;
+}
+
+[data-testid="health-temperature-form"] > [data-ui="field-error"],
+[data-testid="health-spo2-form"] > [data-ui="field-error"],
+[data-testid="health-blood-sugar-form"] > [data-ui="field-error"] {
+  margin: 0;
+}
+
+[data-testid="health-custom-metric-form"] > [data-ui="field-error"],
+[data-testid="health-custom-metric-form"] > p {
+  margin-block: 0;
+}
+
+[data-testid="health-body-measure-form"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  max-width: 42rem;
+}
+
+[data-testid="health-body-measure-form"] > [data-ui="field-error"] {
+  margin: 0;
+}
+
+[data-testid="health-weight-target-form"],
+[data-testid="health-height-form"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  max-width: 32rem;
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-testid="health-weight-target-form"] > p,
+[data-testid="health-weight-target-form"] > [data-ui="field-error"],
+[data-testid="health-height-form"] > p,
+[data-testid="health-height-form"] > [data-ui="field-error"] {
+  grid-column: 1 / -1;
+  margin-block: 0;
+}
+
+@media (min-width: 720px) {
+  [data-ui="health-overview-grid"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--lifeos-space-lg);
+  }
+
+  [data-ui="health-weight-summary-values"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  [data-ui="health-weight-details"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-ui="health-history-dates"],
+  [data-ui="health-history-filters"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-testid="health-weight-target-form"],
+  [data-testid="health-height-form"] {
+    grid-template-columns: minmax(0, 2fr) minmax(7rem, 1fr);
+  }
+
+  [data-ui="health-body-measure-values"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-testid="health-body-measure-form"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-testid="health-temperature-form"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-testid="health-spo2-form"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-testid="health-blood-sugar-form"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-testid="health-custom-metric-form"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-testid="health-body-measure-form"] > [data-ui="field-error"],
+  [data-testid="health-body-measure-form"] > p:last-child,
+  [data-testid="health-temperature-form"] > [data-ui="field-error"],
+  [data-testid="health-temperature-form"] > p:last-child,
+  [data-testid="health-spo2-form"] > [data-ui="field-error"],
+  [data-testid="health-spo2-form"] > p:last-child,
+  [data-testid="health-blood-sugar-form"] > [data-ui="field-error"],
+  [data-testid="health-blood-sugar-form"] > p:last-child,
+  [data-testid="health-custom-metric-form"] > [data-ui="field-error"],
+  [data-testid="health-custom-metric-form"] > [data-ui="meta"],
+  [data-testid="health-custom-metric-form"] > p:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1120px) {
+  [data-ui="health-weight-summary-values"] {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 719px) {
+  [data-ui="health-overview-intro"][data-section="weight"] {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--lifeos-space-md);
+  }
+
+  [data-ui="health-weight-details"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-testid="health-weight-history"] [data-ui="chart-frame"] {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+  }
+
+  [data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="display-section"],
+  [data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="chart-unit"],
+  [data-testid="health-weight-history"] [data-ui="chart-frame"] > [data-ui="segmented"] {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  [data-ui="health-weight-summary-values"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-ui="health-overview-page"] {
+    padding-block-end: calc(5.25rem + 3.5rem + var(--lifeos-space-md));
+  }
+}
+
+@media (max-width: 359px) {
+  [data-ui="health-weight-summary-values"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Health navigation keeps identical dimensions across every section. */
+[data-ui="health-section-selector"] {
+  inline-size: min(100%, 44rem);
+  margin-block-end: 1.5rem;
+}
+[data-ui="health-section-selector"] [data-ui="segmented"] {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+[data-ui="health-section-selector"] legend {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+[data-ui="health-section-selector"] [data-ui="segmented-options"] {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  padding: 4px;
+  border: 1px solid var(--lifeos-color-border);
+}
+[data-ui="health-section-selector"] [data-ui="segmented-option"] {
+  min-block-size: 40px;
+  padding-inline: 8px;
+}
+/* The weight dashboard is isolated from the shared health forms. */
+[data-ui="health-overview-page"][data-section="weight"] {
+  max-inline-size: 1200px;
+  margin-inline: auto;
+}
+[data-ui="health-overview-page"][data-section="weight"]
+  [data-ui="health-weight-page-title"]
+  [data-ui="icon"] {
+  inline-size: 64px;
+  block-size: 64px;
+  padding: 14px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--lifeos-color-accent) 11%, var(--lifeos-color-surface));
+}
+[data-ui="health-overview-page"][data-section="weight"]
+  [data-ui="health-weight-metric-heading"]
+  [data-ui="icon"] {
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 8px;
+  flex: none;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--lifeos-color-accent) 8%, var(--lifeos-color-surface));
+}
+[data-ui="health-weight-summary-values"] {
+  gap: 14px;
+  align-items: stretch;
+}
+[data-ui="health-weight-summary-values"] > [data-ui="card-metric"] {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 160px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--lifeos-color-border) 22%, transparent);
+  border-inline-start-width: 1px;
+  border-radius: 16px;
+  box-shadow: 0 6px 22px rgb(20 50 35 / 4%);
+}
+[data-ui="health-weight-summary-values"] [data-ui="display-section"] {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 14px;
+}
+[data-ui="health-weight-summary-values"] [data-ui="metric-value"] {
+  font-size: clamp(21px, 1.9vw, 29px);
+  line-height: 1.15;
+}
+[data-ui="health-weight-summary-values"] [data-ui="card-metric-body"] {
+  margin-block-start: auto;
+  font-size: 13px;
+}
+[data-ui="health-weight-summary-values"] [data-ui="meta"] {
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+[data-testid="health-weight-history"] [data-ui="chart-frame"],
+[data-ui="health-weight-details"] > section {
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--lifeos-color-border) 22%, transparent);
+  border-radius: 18px;
+  box-shadow: 0 6px 22px rgb(20 50 35 / 4%);
+  min-inline-size: 0;
+  margin-block-end: 0;
+}
+[data-testid="health-weight-history"] {
+  margin-block-end: 22px;
+}
+[data-testid="health-weight-history"] [data-ui="segmented"] {
+  inline-size: 400px;
+  max-inline-size: 100%;
+  border: 0;
+  padding: 0;
+}
+[data-testid="health-weight-history"] [data-ui="segmented"] legend {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+[data-testid="health-weight-history"] [data-ui="segmented-option"] {
+  min-block-size: 38px;
+}
+[data-ui="health-weight-plot"] svg {
+  min-block-size: 0;
+  block-size: auto;
+  max-block-size: 260px;
+}
+[data-ui="health-weight-details"] {
+  align-items: start;
+  gap: 20px;
+}
+[data-ui="health-weight-details"] [data-ui="display-section"] {
+  font-size: 20px;
+}
+[data-testid="health-weight-target-form"] {
+  max-inline-size: none;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--lifeos-color-border) 30%, transparent);
+  border-radius: 12px;
+  align-items: start;
+}
+[data-testid="health-height-form"] {
+  max-inline-size: none;
+  align-items: end;
+}
+[data-ui="health-weight-details"] form > p > button {
+  inline-size: auto;
+  justify-self: start;
+}
+[data-ui="health-weight-target-progress"],
+[data-ui="health-bmi-result"] {
+  border-color: color-mix(in srgb, var(--lifeos-color-border) 25%, transparent);
+  border-radius: 12px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--lifeos-color-accent) 5%, var(--lifeos-color-surface));
+}
+[data-ui="health-bmi-result"] {
+  margin-block-start: 16px;
+}
+[data-ui="health-bmi-result"] strong {
+  display: block;
+  font-size: 32px;
+  color: var(--lifeos-color-brand-ink);
+  font-variant-numeric: tabular-nums;
+  margin-block: 6px;
+}
+[data-ui="health-bmi-info"] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-block-start: 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--lifeos-color-info-border) 7%, var(--lifeos-color-surface));
+}
+[data-ui="health-bmi-info"] [data-ui="icon"] {
+  flex: none;
+}
+[data-ui="health-bmi-info"] [data-ui="meta"] {
+  margin: 0;
+  font-size: 12px;
+}
+@media (max-width: 719px) {
+  [data-ui="health-section-selector"] [data-ui="segmented-options"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  [data-testid="health-weight-history"] [data-ui="segmented"] {
+    inline-size: 100%;
+  }
+  [data-ui="health-weight-plot"] {
+    overflow-x: auto;
+  }
+  [data-ui="health-weight-plot"] svg {
+    min-inline-size: 600px;
+  }
+  [data-ui="health-weight-summary-values"] > [data-ui="card-metric"] {
+    min-block-size: 150px;
+  }
+  [data-ui="health-weight-summary-values"] [data-ui="health-weight-metric-heading"] {
+    align-items: flex-start;
+  }
+}
+[data-ui="health-weight-sparkline"] {
+  display: block;
+  inline-size: 100%;
+  block-size: 32px;
+  margin-block-start: 8px;
+}
+[data-ui="health-weight-sparkline"] polyline {
+  fill: none;
+  stroke: var(--lifeos-color-accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-ui="health-weight-history-subtitle"] {
+  display: block;
+  margin-block-start: 5px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--lifeos-color-muted);
+}
+[data-testid="health-weight-history"] [data-ui="chart-unit"] {
+  font-size: 12px;
+  margin-block-start: 6px;
+}
+@media (min-width: 720px) {
+  [data-testid="health-height-form"] > p:not([data-ui="field-error"]) {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+/* Measurements dashboard: layout and surfaces stay inside this health tab. */
+[data-ui="content-column"]:has([data-ui="health-overview-page"][data-section="measurements"]) main {
+  max-inline-size: 1120px;
+}
+[data-ui="health-overview-page"][data-section="measurements"] {
+  --measurement-tint: color-mix(
+    in srgb,
+    var(--lifeos-color-accent) 7%,
+    var(--lifeos-color-surface)
+  );
+}
+[data-ui="measurement-dashboard-intro"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
+  margin-block-end: 12px;
+  border: 1px solid color-mix(in srgb, var(--lifeos-color-border) 45%, transparent);
+  border-radius: 16px;
+  background: var(--lifeos-color-surface);
+}
+[data-ui="measurement-dashboard-title"] {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+[data-ui="measurement-dashboard-title"] > [data-ui="icon"] {
+  inline-size: 60px;
+  block-size: 60px;
+  padding: 17px;
+  flex: none;
+  border-radius: 18px;
+  background: var(--measurement-tint);
+  color: var(--lifeos-color-brand-ink);
+}
+[data-ui="measurement-dashboard-title"] h2 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  line-height: 1.15;
+}
+[data-ui="measurement-dashboard-title"] [data-ui="meta"] {
+  margin: 0;
+  font-size: 14px;
+}
+[data-ui="measurement-dashboard-stats"] {
+  display: flex;
+  flex: none;
+  gap: 18px;
+}
+[data-ui="measurement-dashboard-stats"] > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+[data-ui="measurement-dashboard-stats"] > div + div {
+  padding-inline-start: 18px;
+  border-inline-start: 1px solid var(--measurement-tint);
+}
+[data-ui="measurement-dashboard-stats"] [data-ui="icon"] {
+  inline-size: 40px;
+  block-size: 40px;
+  padding: 10px;
+  border-radius: 13px;
+  background: var(--measurement-tint);
+  color: var(--lifeos-color-brand-ink);
+}
+[data-ui="measurement-dashboard-stats"] strong,
+[data-ui="measurement-dashboard-stats"] small {
+  display: block;
+  font-size: 13px;
+}
+[data-ui="measurement-dashboard-stats"] small {
+  color: var(--lifeos-color-muted);
+  margin-block-start: 5px;
+}
+[data-ui="measurement-dashboard-grid"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 12px;
+  margin-block-end: 20px;
+}
+[data-ui="measurement-dashboard-grid"] > [data-ui="card"] {
+  min-inline-size: 0;
+  min-block-size: 222px;
+  padding: 18px 20px;
+  margin: 0;
+  border-radius: 16px;
+  border-color: color-mix(in srgb, var(--lifeos-color-border) 45%, transparent);
+  box-shadow: none;
+  overflow: hidden;
+}
+[data-ui="measurement-dashboard-grid"] > [data-testid="health-custom-metrics"] {
+  grid-column: 1 / -1;
+  min-block-size: 150px;
+}
+[data-ui="measurement-card-heading"] {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 20px;
+}
+[data-ui="measurement-card-heading"] > [data-ui="icon"] {
+  inline-size: 42px;
+  block-size: 42px;
+  padding: 10px;
+  flex: none;
+  border-radius: 15px;
+  background: var(--measurement-tint);
+  color: var(--lifeos-color-brand-ink);
+}
+[data-ui="measurement-description"] {
+  margin: 0 0 12px 56px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--lifeos-color-muted);
+}
+[data-ui="measurement-preview-row"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 18px;
+  align-items: center;
+}
+[data-ui="measurement-preview-chart"] {
+  border-radius: 12px;
+  background: var(--measurement-tint);
+  overflow: hidden;
+}
+[data-ui="measurement-preview-chart"] svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 60px;
+}
+[data-ui="measurement-preview-chart"] line {
+  stroke: var(--lifeos-color-muted);
+  stroke-opacity: 0.35;
+  stroke-dasharray: 5 5;
+  stroke-width: 1.5;
+}
+[data-ui="measurement-preview-value"] {
+  text-align: center;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--measurement-tint);
+}
+[data-ui="measurement-preview-value"] strong {
+  display: block;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+[data-ui="measurement-preview-value"] span {
+  display: block;
+  margin-block-start: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--lifeos-color-muted);
+}
+[data-ui="measurement-dashboard-grid"] > section > p {
+  margin: 10px 0 0;
+}
+[data-ui="measurement-dashboard-grid"]
+  > section:has([data-ui="measurement-empty-preview"])
+  > [data-ui="meta"] {
+  display: none;
+}
+[data-ui="measurement-dashboard-grid"] button[data-variant="primary"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  inline-size: auto;
+  min-block-size: 40px;
+  padding-inline: 16px;
+}
+[data-ui="measurement-dashboard-grid"] button [data-ui="icon"] {
+  inline-size: 16px;
+  block-size: 16px;
+  flex: none;
+}
+[data-ui="measurement-body-intro"] {
+  position: relative;
+  min-block-size: 100px;
+  padding-inline-end: 150px;
+}
+[data-ui="measurement-body-intro"] > [data-ui="meta"] {
+  margin: 0 0 10px 56px;
+  font-size: 14px;
+}
+[data-ui="measurement-body-illustration"] {
+  position: absolute;
+  inline-size: 150px;
+  block-size: 150px;
+  object-fit: contain;
+  inset-inline-end: 0;
+  inset-block-start: -28px;
+  pointer-events: none;
+}
+[data-ui="measurement-body-shortcuts"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+[data-ui="measurement-body-shortcuts"] button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-block-size: 30px;
+  padding: 4px 14px;
+  border: 0;
+  border-radius: 30px;
+  background: var(--measurement-tint);
+  color: var(--lifeos-color-text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+[data-ui="measurement-body-shortcuts"] button:hover {
+  background: color-mix(in srgb, var(--lifeos-color-accent) 15%, var(--lifeos-color-surface));
+}
+[data-ui="measurement-custom-intro"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+[data-ui="measurement-custom-intro"] > [data-ui="meta"] {
+  max-inline-size: 36rem;
+  margin: 0 0 0 56px;
+}
+[data-ui="measurement-custom-art"] {
+  display: flex;
+  gap: 16px;
+  flex: none;
+}
+[data-ui="measurement-custom-art"] > [data-ui="icon"] {
+  inline-size: 80px;
+  block-size: 80px;
+  padding: 24px;
+  border-radius: 15px;
+  color: var(--lifeos-color-accent);
+  background: var(--measurement-tint);
+}
+[data-ui="measurement-custom-art"] > [data-ui="icon"]:last-child {
+  transform: rotate(8deg);
+}
+[data-ui="measurement-dashboard-grid"] form {
+  margin-block-start: 18px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+[data-ui="measurement-dashboard-grid"] [data-ui="segmented-options"] {
+  flex-wrap: wrap;
+}
+@media (max-width: 1400px) {
+  [data-ui="measurement-dashboard-intro"] {
+    align-items: start;
+    flex-direction: column;
+    gap: 18px;
+  }
+  [data-ui="measurement-body-intro"] {
+    padding-inline-end: 100px;
+  }
+  [data-ui="measurement-body-illustration"] {
+    inline-size: 100px;
+    block-size: 100px;
+    inset-block-start: 0;
+  }
+  [data-ui="measurement-preview-row"] {
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) 100px;
+  }
+}
+@media (max-width: 900px) {
+  [data-ui="measurement-dashboard-grid"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [data-ui="measurement-dashboard-stats"] {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  [data-ui="measurement-custom-art"] > [data-ui="icon"] {
+    inline-size: 55px;
+    block-size: 55px;
+    padding: 16px;
+  }
+}
+@media (max-width: 480px) {
+  [data-ui="measurement-dashboard-intro"] {
+    padding: 18px;
+  }
+  [data-ui="measurement-dashboard-title"] {
+    gap: 12px;
+  }
+  [data-ui="measurement-dashboard-title"] h2 {
+    font-size: 24px;
+  }
+  [data-ui="measurement-dashboard-stats"] > div + div {
+    border: 0;
+    padding: 0;
+  }
+  [data-ui="measurement-custom-art"] {
+    display: none;
+  }
+  [data-ui="measurement-body-intro"] > [data-ui="meta"],
+  [data-ui="measurement-description"],
+  [data-ui="measurement-custom-intro"] > [data-ui="meta"] {
+    margin-inline-start: 0;
+  }
+}
+[data-ui="measurement-dashboard-grid"] > [data-ui="card"] {
+  padding: 16px 20px;
+  min-block-size: 232px;
+}
+[data-ui="measurement-card-heading"] {
+  align-items: flex-start;
+  line-height: 1.25;
+}
+[data-ui="measurement-card-heading"] > span {
+  padding-block-start: 3px;
+}
+[data-ui="measurement-description"] {
+  margin-block-start: -14px;
+  margin-block-end: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+[data-ui="measurement-preview-value"] {
+  padding: 8px;
+}
+[data-ui="measurement-preview-value"] strong {
+  font-size: 18px;
+  line-height: 1.25;
+}
+[data-ui="measurement-preview-value"] span {
+  font-size: 11px;
+  margin-block-start: 4px;
+}
+[data-ui="measurement-body-intro"] > [data-ui="meta"] {
+  margin-block-start: -14px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+[data-ui="measurement-dashboard-grid"]
+  > [data-testid="health-body-measures"]:has([data-ui="measurement-body-intro"])
+  > [data-ui="meta"] {
+  display: none;
+}
+@media (max-width: 480px) {
+  [data-ui="measurement-description"],
+  [data-ui="measurement-body-intro"] > [data-ui="meta"] {
+    margin-block-start: 4px;
+  }
+}
+[data-ui="measurement-preview-chart"] polyline {
+  fill: none;
+  stroke: var(--lifeos-color-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-ui="measurement-preview-chart"] circle {
+  fill: var(--lifeos-color-accent);
+}
+[data-ui="measurement-history-details"] {
+  margin-block-start: 10px;
+  font-size: 13px;
+}
+[data-ui="measurement-history-details"] summary {
+  cursor: pointer;
+  color: var(--lifeos-color-muted);
+}

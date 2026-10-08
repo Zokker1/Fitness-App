@@ -1,0 +1,81 @@
+[data-ui="health-sleep-trend-charts"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-lg);
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-ui="health-sleep-trend-charts"] > [data-ui="chart-frame"] {
+  min-width: 0;
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-sleep-trend-plot"] {
+  margin: 0;
+}
+
+[data-ui="health-sleep-trend-plot"] svg {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 12rem;
+  overflow: visible;
+}
+
+[data-ui="health-sleep-trend-plot"] svg text {
+  fill: var(--lifeos-color-muted);
+  font: 12px var(--lifeos-font-family);
+}
+
+[data-ui="health-sleep-trend-plot"] [data-ui="health-sleep-trend-y-tick"] line {
+  stroke: var(--lifeos-color-border);
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+}
+
+[data-ui="health-sleep-trend-plot"] [data-ui="health-sleep-trend-axis"] {
+  stroke: var(--lifeos-color-border);
+  stroke-width: 1.25;
+}
+
+[data-ui="health-sleep-trend-plot"][data-series="duration"] polyline {
+  stroke: var(--lifeos-color-accent);
+}
+
+[data-ui="health-sleep-trend-plot"][data-series="quality"] polyline {
+  stroke: var(--lifeos-color-info-border);
+}
+
+[data-ui="health-sleep-trend-plot"] polyline {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+[data-ui="health-sleep-trend-plot"][data-series="duration"] circle {
+  fill: var(--lifeos-color-accent);
+}
+
+[data-ui="health-sleep-trend-plot"][data-series="quality"] circle {
+  fill: var(--lifeos-color-info-border);
+}
+
+[data-ui="health-sleep-trend-plot"] circle {
+  stroke: var(--lifeos-color-surface);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+[data-ui="health-sleep-trend-plot"] figcaption {
+  margin-block-start: var(--lifeos-space-xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+@media (min-width: 840px) {
+  [data-ui="health-sleep-trend-charts"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

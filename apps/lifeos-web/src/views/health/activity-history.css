@@ -1,0 +1,153 @@
+[data-ui="health-activity-intro"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-sm);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="health-activity-frequency"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0 0 var(--lifeos-space-md);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  border-inline-start: 3px solid var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-control);
+  background: color-mix(in srgb, var(--lifeos-color-accent) 8%, var(--lifeos-color-surface));
+}
+
+[data-ui="health-activity-frequency"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-activity-frequency"] dd {
+  margin: 0.1rem 0 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-activity-editor"] {
+  max-width: 52rem;
+  margin-block: 0 var(--lifeos-space-lg);
+  padding: var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-inline-start: 4px solid var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="health-activity-fields"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="health-activity-fields"] textarea[data-ui="input"] {
+  min-height: 5.5rem;
+  resize: vertical;
+}
+
+[data-testid="health-activity-form"] > [data-ui="meta"],
+[data-testid="health-activity-form"] > [data-ui="field-error"],
+[data-ui="health-activity-form-actions"] {
+  margin-block: var(--lifeos-space-sm) 0;
+}
+
+[data-ui="health-activity-form-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="health-activity-days"] {
+  display: grid;
+  gap: var(--lifeos-space-lg);
+}
+
+[data-ui="health-activity-days"] h3 {
+  margin: 0 0 var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-md);
+  text-transform: capitalize;
+}
+
+[data-ui="health-activity-days"] ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="health-activity-days"] li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  padding: var(--lifeos-space-sm) 0 var(--lifeos-space-sm) var(--lifeos-space-xs);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-activity-days"] li::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  border-inline-start: 2px solid color-mix(in srgb, var(--lifeos-color-accent) 34%, transparent);
+  content: "";
+}
+
+[data-ui="health-activity-days"] li::after {
+  position: absolute;
+  inset-block-start: 1.15rem;
+  inset-inline-start: -0.18rem;
+  width: 0.45rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--lifeos-color-surface);
+  border-radius: 50%;
+  background: var(--lifeos-color-accent);
+  content: "";
+}
+
+[data-ui="health-activity-days"] li > time {
+  padding-inline-start: var(--lifeos-space-xs);
+  color: var(--lifeos-color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-activity-entry-copy"] {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-activity-entry-copy"] strong {
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="health-activity-entry-copy"] p {
+  margin: 0;
+  color: var(--lifeos-color-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 719px) {
+  [data-ui="content-column"]:has([data-testid="health-activity-form"]) [data-ui="fab"] {
+    display: none;
+  }
+}
+
+@media (min-width: 720px) {
+  [data-ui="health-activity-fields"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  [data-ui="health-activity-fields"] [data-ui="field"]:has(textarea) {
+    grid-column: 1 / -1;
+  }
+}

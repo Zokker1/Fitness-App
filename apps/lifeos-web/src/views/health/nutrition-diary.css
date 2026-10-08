@@ -1,0 +1,285 @@
+[data-testid="nutrition-diary-card"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="nutrition-diary-controls"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="nutrition-diary-date"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  font-weight: 600;
+}
+
+[data-ui="nutrition-diary-date"] input {
+  min-height: 2.75rem;
+  padding: var(--lifeos-space-xs) var(--lifeos-space-sm);
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  font: inherit;
+}
+
+[data-ui="nutrition-diary-readable-date"] {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  text-transform: capitalize;
+}
+
+[data-ui="nutrition-diary-totals"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm);
+  margin: 0;
+}
+
+[data-ui="nutrition-diary-totals"] > div {
+  min-width: 0;
+  padding: var(--lifeos-space-sm);
+  background: var(--lifeos-color-bg);
+  border-radius: var(--lifeos-radius-control);
+}
+
+[data-ui="nutrition-diary-totals"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="nutrition-diary-totals"] dd {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="nutrition-diary-totals"] small {
+  display: block;
+  margin-block-start: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="nutrition-target-progress"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="nutrition-target-progress"] h3,
+[data-ui="nutrition-target-empty"],
+[data-ui="nutrition-target-zero-note"] {
+  margin: 0;
+}
+
+[data-ui="nutrition-target-progress"] h3 {
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="nutrition-target-progress"] ul {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="nutrition-target-progress"] li {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  min-width: 0;
+  padding: var(--lifeos-space-sm);
+  background: var(--lifeos-color-bg);
+  border-radius: var(--lifeos-radius-control);
+}
+
+[data-ui="nutrition-target-values"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-sm);
+}
+
+[data-ui="nutrition-target-values"] span:first-child {
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="nutrition-target-values"] span:last-child {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="nutrition-target-progress"] progress {
+  margin: 0;
+}
+
+[data-ui="nutrition-target-progress"] small,
+[data-ui="nutrition-target-zero-note"] {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="nutrition-copy-previous"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="nutrition-copy-previous"] summary {
+  width: fit-content;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+[data-ui="nutrition-copy-hint"],
+[data-ui="nutrition-copy-empty"],
+[data-ui="nutrition-copy-feedback"] {
+  margin: 0;
+}
+
+[data-ui="nutrition-copy-hint"] {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="nutrition-copy-meals"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="nutrition-copy-meal"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  min-width: 0;
+  padding: var(--lifeos-space-sm);
+  background: var(--lifeos-color-bg);
+  border-radius: var(--lifeos-radius-control);
+}
+
+[data-ui="nutrition-copy-meal-heading"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-sm);
+}
+
+[data-ui="nutrition-copy-meal-heading"] h4 {
+  margin: 0;
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="nutrition-copy-meal-heading"] span,
+[data-ui="nutrition-copy-meal"] small {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="nutrition-copy-meal"] ul {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="nutrition-copy-meal"] li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-sm);
+}
+
+[data-ui="nutrition-copy-meal"] li span:last-child {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="nutrition-diary-groups"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="nutrition-diary-meal"] {
+  padding-block-start: var(--lifeos-space-sm);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="nutrition-diary-meal"] h3 {
+  margin: 0 0 var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="nutrition-diary-meal"] ul {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="nutrition-diary-meal"] li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-sm);
+  align-items: baseline;
+}
+
+[data-ui="nutrition-diary-meal"] time,
+[data-ui="nutrition-diary-entry-amount"],
+[data-ui="nutrition-diary-entry-calories"] {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="nutrition-diary-entry-name"] {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+[data-ui="nutrition-diary-entry-amount"] {
+  grid-column: 2;
+}
+
+[data-ui="nutrition-diary-entry-calories"] {
+  grid-column: 2;
+}
+
+[data-ui="nutrition-diary-empty"],
+[data-ui="nutrition-diary-error"] {
+  margin: 0;
+}
+
+[data-ui="nutrition-diary-empty"] {
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="nutrition-diary-error"] {
+  color: var(--lifeos-color-danger-text);
+}
+
+@media (min-width: 720px) {
+  [data-ui="nutrition-diary-totals"] {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  [data-ui="nutrition-diary-meal"] li {
+    grid-template-columns: 5rem minmax(0, 1fr) minmax(5rem, auto) minmax(6rem, auto);
+  }
+
+  [data-ui="nutrition-diary-entry-amount"],
+  [data-ui="nutrition-diary-entry-calories"] {
+    grid-column: auto;
+    text-align: end;
+  }
+}

@@ -1,0 +1,17 @@
+# T034: prettier ei koske generoituun, binääriin eikä salaisuuksiin.
+dist/
+node_modules/
+.playwright-cli/
+output/playwright/
+package-lock.json
+test-results/
+playwright-report/
+*.png
+*.wasm
+.env
+.env.*
+!.env.example
+LIFE_OS_MASTER_SPEC_SELAIN_KEVYT_AGENTTIOHJAUS_FI.md
+SKILL.md
+.progress/
+docs/

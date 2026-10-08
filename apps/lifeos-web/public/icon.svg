@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="LifeOS-kuvake">
+  <rect width="64" height="64" rx="14" fill="#1a2e22" />
+  <circle cx="32" cy="32" r="13" fill="none" stroke="#e8f0e6" stroke-width="4" />
+  <circle cx="32" cy="32" r="4" fill="#9dc49b" />
+</svg>

@@ -1,0 +1,164 @@
+[data-ui="food-page"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  padding-block-end: 4.5rem;
+}
+
+[data-ui="food-back-link"] {
+  justify-self: start;
+  color: var(--lifeos-color-link);
+  font-weight: 600;
+  text-underline-offset: 0.2em;
+}
+
+[data-ui="food-page"] [data-ui="display-page"] {
+  margin-block: 0;
+}
+
+[data-ui="food-page-intro"] {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="food-library-layout"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-md);
+  align-items: start;
+}
+
+[data-testid="food-editor"] > [data-ui="meta"] {
+  max-width: 42rem;
+  margin-block: 0 var(--lifeos-space-md);
+}
+
+[data-testid="food-form"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="food-nutrient-grid"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+}
+
+[data-testid="food-form"] > [data-ui="meta"] {
+  margin: 0;
+}
+
+[data-testid="food-form"] > [data-ui="field-error"] {
+  margin: 0;
+}
+
+[data-ui="food-form-actions"],
+[data-ui="food-row-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-testid="food-library"] > [data-ui="field"] {
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="food-list"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="food-row"] {
+  min-width: 0;
+  padding-block: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="food-row-heading"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: start;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="food-row-heading"] h3 {
+  margin: 0;
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="food-row-heading"] [data-ui="meta"] {
+  margin-block: var(--lifeos-space-2xs) 0;
+}
+
+[data-ui="food-nutrition-values"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm) var(--lifeos-space-md);
+  margin: var(--lifeos-space-md) 0 0;
+}
+
+[data-ui="food-nutrition-values"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="food-nutrition-values"] dd {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="food-row"][data-archived="true"] {
+  opacity: 0.8;
+}
+
+[data-ui="food-archived-list"] {
+  margin-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="food-archived-list"] > summary {
+  padding-block: var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+  cursor: pointer;
+  text-underline-offset: 0.2em;
+}
+
+@media (min-width: 640px) {
+  [data-ui="food-nutrient-grid"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-ui="food-nutrition-values"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  [data-ui="food-library-layout"] {
+    grid-template-columns: minmax(19rem, 0.9fr) minmax(0, 1.1fr);
+    gap: var(--lifeos-space-lg);
+  }
+}
+
+@media (min-width: 720px) {
+  [data-ui="food-form-actions"] {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 719px) {
+  [data-ui="food-page"] {
+    padding-block-end: calc(5.25rem + 3.5rem + var(--lifeos-space-md));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="food-page"] * {
+    scroll-behavior: auto;
+  }
+}

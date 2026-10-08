@@ -1,0 +1,259 @@
+[data-testid="sync-status"] [data-ui="sync-status-metrics"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm);
+  margin: var(--lifeos-space-md) 0;
+}
+
+[data-ui="sync-status-metrics"] > div {
+  min-inline-size: 0;
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="sync-status-metrics"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="sync-status-metrics"] dd {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+[data-ui="browser-installations"] {
+  margin-block: var(--lifeos-space-md);
+}
+
+[data-ui="browser-installations"] > h3,
+[data-ui="browser-installations"] > p {
+  margin-block: 0 var(--lifeos-space-xs);
+}
+
+[data-ui="browser-installations"] > p {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="browser-installation-list"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="browser-installation"] {
+  min-inline-size: 0;
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="browser-installation-title"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="browser-installation-title"] h4 {
+  min-inline-size: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+[data-ui="browser-installation-title"] span {
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lifeos-color-accent) 12%, var(--lifeos-color-surface));
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-xs);
+}
+
+[data-ui="browser-installation"] dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm);
+  margin: var(--lifeos-space-sm) 0 0;
+}
+
+[data-ui="browser-installation"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="browser-installation"] dd {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+[data-ui="browser-installation-rename-form"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  max-inline-size: 34rem;
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-ui="browser-installation-rename-form"] button {
+  justify-self: start;
+}
+
+[data-ui="browser-installation-rename-form"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="browser-installation-revoke"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+[data-ui="browser-installation-revoke"] p {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="sync-status-form"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  max-inline-size: 34rem;
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-ui="sync-status-form"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="sync-write-key-state"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  padding-block: var(--lifeos-space-xs);
+}
+
+[data-ui="sync-write-key-state"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="sync-write-key-state"] button {
+  justify-self: start;
+}
+
+[data-ui="sync-status-form"] button {
+  justify-self: start;
+  margin-block-start: var(--lifeos-space-xs);
+}
+
+[data-ui="sync-status-success"] {
+  margin-block: var(--lifeos-space-sm);
+}
+
+.sync-key-section {
+  max-inline-size: 34rem;
+  padding-block: var(--lifeos-space-sm);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+.sync-key-section summary {
+  color: var(--lifeos-color-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sync-key-section > p {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="sync-key-create-form"],
+[data-ui="sync-key-import-form"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+[data-ui="sync-key-create-form"] button,
+[data-ui="sync-key-import-form"] button {
+  justify-self: start;
+  margin-block-start: var(--lifeos-space-xs);
+}
+
+[data-ui="sync-recovery-reveal"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  max-inline-size: 34rem;
+  margin-block: var(--lifeos-space-md);
+  padding: var(--lifeos-space-md);
+  border-inline-start: 4px solid var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-control);
+  background: color-mix(in srgb, var(--lifeos-color-accent) 8%, var(--lifeos-color-surface));
+}
+
+[data-ui="sync-recovery-reveal"] h3,
+[data-ui="sync-recovery-reveal"] p {
+  margin: 0;
+}
+
+[data-ui="sync-recovery-export"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  max-inline-size: 34rem;
+  margin-block: var(--lifeos-space-sm);
+}
+
+[data-ui="sync-recovery-export"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="sync-recovery-export"] button {
+  justify-self: start;
+}
+
+[data-ui="sync-recovery-reveal"] output {
+  display: block;
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-surface);
+  font-family: var(--lifeos-font-mono, monospace);
+  font-size: var(--lifeos-font-md);
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.sync-recovery-ack {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-xs);
+}
+
+.sync-recovery-ack input {
+  flex: 0 0 auto;
+  margin-block-start: 0.2em;
+}
+
+@media (max-width: 32rem) {
+  [data-testid="sync-status"] [data-ui="sync-status-metrics"] {
+    grid-template-columns: 1fr;
+  }
+
+  [data-ui="browser-installation"] dl {
+    grid-template-columns: 1fr;
+  }
+}

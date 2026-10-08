@@ -1,0 +1,15 @@
+{
+  "name": "@lifeos/config",
+  "private": true,
+  "version": "0.0.0",
+  "description": "LifeOS config ja environment validation — julkinen selainconfig ilman salaisuuksia; salaisuusportti kaataa buildin ennen bundlea.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

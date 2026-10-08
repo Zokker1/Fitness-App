@@ -1,0 +1,68 @@
+[data-ui="quick-water-panel"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="quick-water-panel"] > p {
+  margin: 0;
+}
+
+[data-ui="quick-water-controls"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="quick-water-controls"] fieldset {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+[data-ui="quick-water-controls"] legend,
+[data-ui="quick-water-custom"] h3 {
+  margin-block-end: var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 700;
+}
+
+[data-ui="quick-water-presets"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="quick-water-presets"] button,
+[data-ui="quick-water-custom"] > button {
+  inline-size: 100%;
+  min-block-size: var(--lifeos-touch-min);
+}
+
+[data-ui="quick-water-custom"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="quick-water-custom"] h3 {
+  margin: 0;
+}
+
+[data-ui="quick-water-stepper"] {
+  display: grid;
+  grid-template-columns: minmax(3.5rem, auto) minmax(5rem, 1fr) minmax(3.5rem, auto);
+  align-items: end;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="quick-water-stepper"] > button {
+  min-block-size: var(--lifeos-touch-min);
+}
+
+[data-ui="quick-water-stepper"] label {
+  min-inline-size: 0;
+}
+
+[data-ui="quick-water-stepper"] input {
+  inline-size: 100%;
+  min-block-size: var(--lifeos-touch-min);
+}

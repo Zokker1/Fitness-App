@@ -1,0 +1,51 @@
+[data-ui="nutrition-overview-page"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  padding-block-end: 4.5rem;
+}
+
+[data-ui="nutrition-overview-intro"] {
+  max-width: 42rem;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="nutrition-overview-intro"] p {
+  margin: 0.2rem 0 0;
+}
+
+[data-ui="nutrition-food-section"],
+[data-ui="nutrition-settings"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="nutrition-overview-grid"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-md);
+  align-items: start;
+}
+
+[data-ui="nutrition-supplements-module"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="supplement-stock-row"] + [data-ui="supplement-stock-row"] {
+  margin-block-start: var(--lifeos-space-md);
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+@media (min-width: 720px) {
+  [data-ui="nutrition-overview-grid"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--lifeos-space-lg);
+  }
+}
+
+@media (max-width: 719px) {
+  [data-ui="nutrition-overview-page"] {
+    padding-block-end: calc(5.25rem + 3.5rem + var(--lifeos-space-md));
+  }
+}

@@ -1,0 +1,49 @@
+[data-ui="rail-language-control"],
+[data-ui="drawer-language-control"] {
+  padding-inline: var(--lifeos-space-xs);
+}
+
+[data-ui="language-control"] [data-ui="segmented"] {
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+[data-ui="language-control"] [data-ui="segmented"] legend {
+  padding-inline: 0;
+  margin-block-end: var(--lifeos-space-3xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 600;
+}
+
+[data-ui="language-control"] [data-ui="segmented-options"] {
+  display: inline-flex;
+  inline-size: fit-content;
+  gap: var(--lifeos-space-3xs);
+  padding: 0;
+  background: transparent;
+}
+
+[data-ui="language-control"] [data-ui="segmented-option"] {
+  flex: none;
+  min-inline-size: var(--lifeos-touch-min);
+  min-block-size: var(--lifeos-touch-min);
+  padding-inline: var(--lifeos-space-xs);
+  border-radius: var(--lifeos-radius-control);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 500;
+}
+
+[data-ui="language-control"] [data-ui="segmented-option"]:hover {
+  background: transparent;
+}
+
+[data-ui="language-control"] [data-ui="segmented-option"][data-checked="true"] {
+  background: transparent;
+  color: var(--lifeos-color-brand-ink);
+  font-weight: 700;
+  text-shadow: 0 0 0.55em color-mix(in srgb, var(--lifeos-color-accent) 40%, transparent);
+}

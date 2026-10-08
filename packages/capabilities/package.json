@@ -1,0 +1,15 @@
+{
+  "name": "@lifeos/capabilities",
+  "private": true,
+  "version": "0.0.0",
+  "description": "LifeOS selain-capability-rajapinnat (storage/notifications/file/OAuth/SW) — domain ei koske selaimen natiivi-APIeja suoraan.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

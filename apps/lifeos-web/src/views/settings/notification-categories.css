@@ -1,0 +1,23 @@
+[data-ui="notification-category-list"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="notification-category-list"] > li {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  padding-block: var(--lifeos-space-sm);
+  border-bottom: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="notification-category-list"] > li:last-child {
+  border-bottom: 0;
+}
+
+[data-ui="notification-category-list"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}

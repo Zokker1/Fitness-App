@@ -1,0 +1,72 @@
+[data-ui="meal-slots-settings"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="meal-slots-hint"] {
+  max-width: 54rem;
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-testid="meal-slots-form"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="meal-slots-list"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="meal-slots-list"] > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: var(--lifeos-space-sm);
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+}
+
+[data-ui="meal-slots-list"] > li[data-archived="true"] {
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="meal-slots-list"] label {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  font-weight: 600;
+}
+
+[data-ui="meal-slots-list"] input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding-inline: var(--lifeos-space-sm);
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  font: inherit;
+}
+
+[data-ui="meal-slot-actions"],
+[data-ui="meal-slots-form-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="meal-slots-form-actions"] {
+  justify-content: flex-end;
+}
+
+@media (min-width: 720px) {
+  [data-ui="meal-slots-list"] > li {
+    grid-template-columns: minmax(12rem, 1fr) auto;
+  }
+}

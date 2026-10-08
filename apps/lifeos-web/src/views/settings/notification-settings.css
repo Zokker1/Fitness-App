@@ -1,0 +1,25 @@
+[data-ui="notification-settings-content"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="notification-settings-subsection"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="notification-settings-subsection"] > p {
+  margin: 0;
+}
+
+[data-ui="notification-subheading"] {
+  margin: 0;
+  font-size: var(--lifeos-font-md);
+  font-weight: 700;
+  line-height: var(--lifeos-line-display);
+}
+
+[data-ui="notification-settings-subsection"][data-ui-variant="browser-permissions"] {
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}

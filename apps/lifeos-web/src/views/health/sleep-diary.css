@@ -1,0 +1,148 @@
+[data-ui="health-sleep-intro"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-sm);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-testid="health-sleep-diary"] [data-ui="empty-state"] {
+  max-inline-size: 19rem;
+  margin-inline: 0 auto;
+  padding-inline: 0;
+  text-align: start;
+}
+
+[data-ui="health-sleep-editor"] {
+  max-width: 52rem;
+  margin-block: 0 var(--lifeos-space-lg);
+  padding: var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-inline-start: 4px solid var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="health-sleep-fields"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="health-sleep-fields"] [data-ui="segmented"] {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+[data-testid="health-sleep-form"] > [data-ui="meta"],
+[data-testid="health-sleep-form"] > [data-ui="field-error"],
+[data-ui="health-sleep-form-actions"] {
+  margin-block: var(--lifeos-space-sm) 0;
+}
+
+[data-ui="health-sleep-form-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="health-sleep-days"] {
+  display: grid;
+  gap: var(--lifeos-space-lg);
+}
+
+[data-ui="health-sleep-days"] h3 {
+  margin: 0 0 var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-md);
+  text-transform: capitalize;
+}
+
+[data-ui="health-sleep-days"] ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="health-sleep-days"] li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+  padding: var(--lifeos-space-sm) 0 var(--lifeos-space-sm) var(--lifeos-space-xs);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-sleep-days"] li::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  border-inline-start: 2px solid color-mix(in srgb, var(--lifeos-color-accent) 34%, transparent);
+  content: "";
+}
+
+[data-ui="health-sleep-days"] li::after {
+  position: absolute;
+  inset-block-start: 1.15rem;
+  inset-inline-start: -0.18rem;
+  width: 0.45rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--lifeos-color-surface);
+  border-radius: 50%;
+  background: var(--lifeos-color-accent);
+  content: "";
+}
+
+[data-ui="health-sleep-days"] li[data-sleep-kind="nap"]::after {
+  background: var(--lifeos-color-info-border);
+}
+
+[data-ui="health-sleep-days"] li > time {
+  padding-inline-start: var(--lifeos-space-xs);
+  color: var(--lifeos-color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-sleep-entry-copy"] {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-sleep-entry-heading"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--lifeos-space-xs) var(--lifeos-space-sm);
+  color: var(--lifeos-color-text);
+}
+
+[data-sleep-kind="nap"] [data-ui="health-sleep-entry-heading"] strong {
+  color: var(--lifeos-color-info-text);
+}
+
+[data-ui="health-sleep-duration"] {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 719px) {
+  [data-ui="content-column"]:has([data-testid="health-sleep-form"]) [data-ui="fab"] {
+    display: none;
+  }
+}
+
+@media (min-width: 720px) {
+  [data-ui="health-sleep-fields"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  [data-ui="health-sleep-fields"] [data-ui="segmented"] {
+    grid-column: 1 / -1;
+  }
+}

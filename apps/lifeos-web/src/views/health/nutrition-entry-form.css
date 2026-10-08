@@ -1,0 +1,99 @@
+[data-testid="nutrition-entry-card"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-testid="nutrition-entry-form"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="nutrition-entry-quick-foods"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="nutrition-entry-quick-foods"] section {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="nutrition-entry-quick-foods"] h3 {
+  margin: 0;
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="nutrition-entry-quick-foods"] ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="nutrition-entry-quick-foods"] button[aria-pressed="true"] {
+  border-color: var(--lifeos-color-accent);
+  color: var(--lifeos-color-accent);
+}
+
+[data-ui="nutrition-entry-time"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  font-weight: 600;
+}
+
+[data-ui="nutrition-entry-time"] input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--lifeos-space-xs) var(--lifeos-space-sm);
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  font: inherit;
+}
+
+[data-ui="nutrition-entry-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="nutrition-entry-favorite-error"] {
+  margin: 0;
+  color: var(--lifeos-color-danger-text);
+}
+
+[data-ui="nutrition-entry-hint"],
+[data-ui="nutrition-entry-empty"] > p {
+  margin-block: var(--lifeos-space-xs) 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="nutrition-entry-empty"] a {
+  color: var(--lifeos-color-link);
+  font-weight: 600;
+  text-underline-offset: 0.2em;
+}
+
+[data-ui="nutrition-entry-error"] {
+  margin: 0;
+  color: var(--lifeos-color-danger-text);
+}
+
+@media (min-width: 720px) {
+  [data-testid="nutrition-entry-form"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-ui="nutrition-entry-quick-foods"] {
+    grid-column: 1 / -1;
+  }
+
+  [data-ui="nutrition-entry-actions"] {
+    grid-column: 1 / -1;
+  }
+}

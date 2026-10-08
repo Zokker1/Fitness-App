@@ -1,0 +1,5 @@
+[data-ui="notification-permission-status"] {
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-bg);
+}

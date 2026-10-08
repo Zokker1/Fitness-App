@@ -1,0 +1,5 @@
+[data-ui="reminder-notice-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-xs);
+}

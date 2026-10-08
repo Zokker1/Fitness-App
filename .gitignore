@@ -1,0 +1,46 @@
+# Deps
+node_modules/
+.pnp
+.pnp.*
+
+# Build
+dist/
+build/
+*.local
+
+# Logs / diagnostics
+logs/
+*.log
+.playwright-cli/
+output/playwright/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env — ei koskaan commitiin salaisuuksia
+.env
+.env.*
+!.env.example
+
+# LifeOS local data / test artefacts (ei commitiin käyttäjädataa)
+*.sqlite
+*.sqlite-*
+*.db
+.opfs-dump/
+
+# PWA generated (pidetään lähde, ei build-tuloste)
+/apps/*/dist/
+/apps/*/dev-dist/
+
+# Test output and duplicate screenshot archive
+test-results/
+playwright-report/
+portfolio-images-en.zip

@@ -1,0 +1,17 @@
+{
+  "name": "@lifeos/domain",
+  "private": true,
+  "version": "0.0.0",
+  "description": "LifeOS domain-tyypit ja puhtaat säännöt — ei riippuvuutta UI:sta, selaimen APIeista, Google Drivesta tai DB-toteutuksesta.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}

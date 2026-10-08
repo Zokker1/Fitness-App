@@ -1,0 +1,23 @@
+{
+  "name": "@lifeos/data",
+  "private": true,
+  "version": "0.0.0",
+  "description": "LifeOS data-access-rajapinnat + muistitoteutus — testattava ja alustariippumaton, ei UI-, selain-, Drive- eikä SQLite-riippuvuutta.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@lifeos/domain": "0.0.0",
+    "@noble/ciphers": "2.4.0",
+    "@noble/hashes": "2.4.0",
+    "@sqlite.org/sqlite-wasm": "3.53.4-build1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}

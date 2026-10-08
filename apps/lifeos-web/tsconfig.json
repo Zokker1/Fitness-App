@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@lifeos/capabilities": ["../../packages/capabilities/src/index.ts"],
+      "@lifeos/domain": ["../../packages/domain/src/index.ts"],
+      "@lifeos/data": ["../../packages/data/src/index.ts"],
+      "@lifeos/ui": ["../../packages/ui/src/index.ts"],
+      "@lifeos/config": ["../../packages/config/src/index.ts"]
+    }
+  },
+  "include": ["src", "test", "e2e", "vite.config.ts", "vitest.config.ts", "playwright.config.ts"]
+}

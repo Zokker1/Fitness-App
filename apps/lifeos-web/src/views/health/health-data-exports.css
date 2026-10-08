@@ -1,0 +1,17 @@
+[data-testid="health-data-exports"] [data-ui="health-data-exports-description"] {
+  max-width: 68ch;
+}
+
+[data-ui="health-data-export-actions"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 0.625rem;
+  padding: 0;
+  margin: 1rem 0;
+  list-style: none;
+}
+
+[data-ui="health-data-export-actions"] button {
+  width: 100%;
+  min-height: 2.75rem;
+}

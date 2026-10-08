@@ -1,0 +1,44 @@
+{
+  "name": "lifeos",
+  "private": true,
+  "version": "0.0.0",
+  "description": "LifeOS — local-first selain-superapp (React/TypeScript/Vite/PWA + SQLite WASM/OPFS). Yksi responsiivinen selainapp mobiili- ja desktop-selaimiin.",
+  "type": "module",
+  "packageManager": "npm@10.9.3",
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "install:clean": "npm ci",
+    "verify:install": "npm ls --depth=0",
+    "list": "npm ls --depth=0",
+    "dev": "npm run dev --workspace @lifeos/web",
+    "build": "npm run build --workspace @lifeos/web",
+    "preview": "npm run preview --workspace @lifeos/web",
+    "typecheck": "npm run typecheck --workspace @lifeos/web",
+    "test": "npm run test --workspace @lifeos/domain && npm run test --workspace @lifeos/data && npm run test --workspace @lifeos/web",
+    "test:e2e": "npm run test:e2e --workspace @lifeos/web",
+    "test:e2e:matrix": "npm run test:e2e:matrix --workspace @lifeos/web",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "quality": "npm run typecheck --workspaces --if-present && npm run lint && npm run format:check && npm test",
+    "verify": "node tools/verify.mjs",
+    "verify:e2e": "npm run test:e2e"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.10.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "prettier": "3.9.6",
+    "typescript-eslint": "8.70.0"
+  }
+}

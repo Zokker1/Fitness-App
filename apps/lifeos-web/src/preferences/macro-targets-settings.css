@@ -1,0 +1,35 @@
+[data-ui="macro-targets-settings"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="macro-targets-hint"] {
+  max-width: 54rem;
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-testid="macro-targets-form"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="macro-targets-fields"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="macro-targets-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+@media (min-width: 720px) {
+  [data-ui="macro-targets-fields"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

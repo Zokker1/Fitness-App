@@ -1,0 +1,4941 @@
+/* T028: B01-kehys + T041: token-sovellus + T042: koko shell semanttisiin
+   light-tokeneihin + T044: responsiivinen premium-kehys. Rakenne T028:sta;
+   kaikki visuaaliset arvot tokeneista (tokens.css):
+   - layout-vaihto bottom-nav <-> rail breakpointissa (720px, vrt. breakpoints.ts)
+   - safe-area-insetit mobiilissa (§27)
+   - näkyvä focus + riittävä touch-target (§28/§31)
+   - skip-link, prefers-reduced-motion (§30/§31)
+   T041 soveltaa: perhe/asteikko/tausta/teksti/hiljainen/brand/accent/
+   reunat/radius/elevation/motion/focus. T042: EI selaimen oletusvärejä
+   missään pinnassa (linkit/dl/banner/virhe/skip-link); dark-teema (T043)
+   tulee samojen muuttujien ylikirjoituksena, ei uusia selektoreita.
+   T044: nav-ikonit+labelit, Lisää-drawer, wide-aside (≥1200px); leveydet
+   breakpoints.ts:stä (720/1200), ei kovakoodattuja arvoja alla paitsi
+   media-ehdoissa jotka peilaavat niitä. */
+
+/* T055: border-box kaikessa (§31: font scaling ei riko layoutia). Ilman
+   tätä width/inline-size:100% + padding kasvatti border-boxin viewportin
+   yli (main 390+40=430 mobiilissa) — vaakavuoto joka suureni fonttikoon
+   mukana. Border-box lukitsee mitat border-boxiin kaikissa skaaleissa. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--lifeos-color-bg);
+  color: var(--lifeos-color-text);
+  font-family: var(--lifeos-font-family);
+  font-size: var(--lifeos-font-md);
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="sr-only"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Linkit: aina link-token + underline paitsi nav (oma pinta).
+   §31: linkki erottuu värin lisäksi alleviivauksella. */
+main a {
+  color: var(--lifeos-color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+main a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* T045: typografiahierarkia (Display/Body/Meta, brief §3). Elementti-
+   selektorit antavat järkevän oletuksen myös ilman komponenttia; data-ui-
+   koukut lukitsevat roolin (page/section/hero/body/meta). Ei ALL-CAPS-
+   eyebrowta missään; otsikot balance-kääreellä. */
+h1,
+h2,
+h3 {
+  line-height: var(--lifeos-line-display);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin-block: 0 var(--lifeos-space-sm);
+}
+
+p,
+li {
+  max-inline-size: var(--lifeos-measure);
+}
+
+p {
+  margin-block: 0 var(--lifeos-space-sm);
+}
+
+[data-ui="display-page"] {
+  font-size: var(--lifeos-font-2xl);
+  font-weight: 700;
+  line-height: var(--lifeos-line-display);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+[data-ui="display-section"] {
+  font-size: var(--lifeos-font-xl);
+  font-weight: 700;
+  line-height: var(--lifeos-line-display);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+[data-ui="display-hero"] {
+  font-size: var(--lifeos-font-3xl);
+  font-weight: 700;
+  line-height: var(--lifeos-line-display);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="body"] {
+  font-size: var(--lifeos-font-md);
+  font-weight: 400;
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="meta"] {
+  font-size: var(--lifeos-font-sm);
+  font-weight: 500;
+  line-height: var(--lifeos-line-meta);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="app-shell"] {
+  display: flex;
+  min-block-size: 100dvh;
+}
+
+[data-ui="skip-link"] {
+  position: absolute;
+  inset-inline-start: 0.5rem;
+  inset-block-start: -3rem;
+  color: var(--lifeos-color-link);
+  background: var(--lifeos-color-surface);
+  padding: var(--lifeos-space-xs) var(--lifeos-space-sm);
+  border-radius: var(--lifeos-radius-control);
+}
+
+[data-ui="skip-link"]:focus-visible {
+  inset-block-start: 0.5rem;
+}
+
+[data-ui="rail"] {
+  display: none;
+  flex-direction: column;
+  gap: var(--lifeos-space-md);
+  padding: var(--lifeos-space-md);
+  min-inline-size: 12rem;
+  background: var(--lifeos-color-surface);
+  border-inline-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="brand"] {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  font-weight: 700;
+  font-size: var(--lifeos-font-lg);
+  color: var(--lifeos-color-brand-ink);
+  margin: 0;
+}
+
+[data-ui="brand-mark"] {
+  display: inline-block;
+  inline-size: 2rem;
+  block-size: 2rem;
+  flex: none;
+  background: center / contain no-repeat url("./assets/lifeos-mark.png");
+}
+
+/* T044: nav-ikonit (Lucide, 1.25rem) + labelit aina yhdessä (§31).
+   T045: yleinen Icon (data-ui="icon") + tekstin seassa (icon-inline, 1em).
+   CSS-maski perii tekstin värin. nav-icon on taaksepäin-yhteensopiva alias
+   (E2E + vanhat queryt). */
+[data-ui="icon"],
+[data-ui="nav-icon"] {
+  display: inline-flex;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  flex: none;
+}
+
+[data-ui="icon-inline"] {
+  display: inline-flex;
+  inline-size: 1em;
+  block-size: 1em;
+  flex: none;
+  vertical-align: -0.125em;
+}
+
+[data-ui="icon"]::before,
+[data-ui="icon-inline"]::before,
+[data-ui="nav-icon"]::before {
+  content: "";
+  inline-size: 100%;
+  block-size: 100%;
+  flex: none;
+  background-color: currentColor;
+  -webkit-mask-image: var(--lifeos-icon-mask);
+  mask-image: var(--lifeos-icon-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+[data-ui="rail"] ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+[data-ui="content-column"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+[data-ui="content-column"] main {
+  flex: 1;
+  min-inline-size: 0;
+  padding: var(--lifeos-space-md);
+  max-inline-size: 70rem;
+  inline-size: 100%;
+  margin-inline: auto;
+}
+
+/* T164: fullscreen-focus pitää huomion yhdessä rajatussa työpinnassa.
+   Sisältö käyttää samoja pintoja ja värejä kuin muu sovellus, mutta antaa
+   ajastimelle oman selkeän tilan ilman erillistä overlay-logiikkaa. */
+[data-ui="focus-fullscreen"] {
+  display: grid;
+  min-block-size: min(42rem, calc(100dvh - 7rem));
+  place-items: center;
+  padding: clamp(var(--lifeos-space-lg), 6vw, var(--lifeos-space-3xl));
+  border: 1px solid color-mix(in srgb, var(--lifeos-color-brand) 16%, transparent);
+  border-radius: var(--lifeos-radius-sheet);
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  box-shadow: var(--lifeos-elevation-2);
+}
+
+[data-ui="focus-session"] {
+  display: grid;
+  inline-size: min(100%, 42rem);
+  justify-items: center;
+  gap: var(--lifeos-space-md);
+  text-align: center;
+}
+
+[data-ui="focus-session-header"] {
+  display: flex;
+  inline-size: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="focus-kicker"] {
+  margin: 0;
+  color: color-mix(in srgb, currentColor 72%, transparent);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 600;
+}
+
+[data-ui="focus-recovery-notice"] {
+  inline-size: min(100%, 32rem);
+  margin: 0;
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  border: 1px solid color-mix(in srgb, currentColor 24%, transparent);
+  border-radius: var(--lifeos-radius-card);
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  color: inherit;
+  font-size: var(--lifeos-font-sm);
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="focus-task"] {
+  max-inline-size: 18ch;
+  margin: 0;
+  color: inherit;
+  font-size: clamp(var(--lifeos-font-xl), 4vw, var(--lifeos-font-2xl));
+  line-height: var(--lifeos-line-display);
+}
+
+[data-ui="focus-description"],
+[data-ui="focus-preset"] {
+  max-inline-size: 42ch;
+  margin: 0;
+  color: color-mix(in srgb, currentColor 78%, transparent);
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="focus-preset"] {
+  font-weight: 600;
+}
+
+[data-ui="focus-next-step"] {
+  display: grid;
+  inline-size: min(100%, 28rem);
+  gap: var(--lifeos-space-2xs);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-inline-start: 3px solid var(--lifeos-color-on-brand);
+  border-radius: var(--lifeos-radius-card);
+  background: color-mix(in srgb, currentColor 6%, transparent);
+  text-align: start;
+}
+
+[data-ui="focus-next-step-kicker"] {
+  margin: 0;
+  color: color-mix(in srgb, currentColor 74%, transparent);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 600;
+}
+
+[data-ui="focus-next-step"] h3 {
+  overflow-wrap: anywhere;
+  margin: 0;
+  font-size: var(--lifeos-font-lg);
+  line-height: var(--lifeos-line-display);
+}
+
+[data-ui="focus-next-step"] [data-ui="meta"] {
+  margin: 0;
+  color: color-mix(in srgb, currentColor 76%, transparent);
+}
+
+[data-ui="focus-timebox-context"] {
+  max-inline-size: 42ch;
+  margin: calc(-1 * var(--lifeos-space-xs)) 0 0;
+  color: color-mix(in srgb, currentColor 76%, transparent);
+  font-size: var(--lifeos-font-sm);
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="focus-visual-progress"] {
+  position: relative;
+  display: grid;
+  inline-size: clamp(13rem, 62vw, 20rem);
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+[data-ui="focus-visual-progress"] [data-ui="progress-ring"] {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+[data-ui="focus-visual-progress"] [data-ui="progress-ring-track"] {
+  stroke: currentColor;
+  stroke-opacity: 0.18;
+  stroke-width: 4;
+}
+
+[data-ui="focus-visual-progress"] [data-ui="progress-ring-fill"] {
+  stroke: var(--lifeos-color-on-brand);
+  stroke-width: 4;
+}
+
+[data-ui="focus-visual-center"] {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="focus-time"] {
+  margin: 0;
+  color: inherit;
+  font-size: clamp(3.8rem, 16vw, 7.5rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  line-height: 0.92;
+}
+
+[data-ui="focus-remaining-label"] {
+  color: color-mix(in srgb, currentColor 72%, transparent);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 600;
+}
+
+[data-ui="focus-status-row"] {
+  min-block-size: 2.5rem;
+}
+
+[data-ui="focus-fullscreen"] [data-ui="meta"] {
+  margin: 0;
+  color: color-mix(in srgb, currentColor 72%, transparent);
+}
+
+[data-ui="focus-fullscreen"] [data-ui="field"] {
+  inline-size: min(100%, 28rem);
+  margin-block-end: 0;
+  text-align: start;
+}
+
+[data-ui="focus-fullscreen"] [data-ui="field-label"],
+[data-ui="focus-fullscreen"] [data-ui="field-hint"] {
+  color: inherit;
+}
+
+[data-ui="focus-controls"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lifeos-space-sm);
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+[data-ui="focus-controls"] [data-variant="primary"] {
+  background: var(--lifeos-color-on-brand);
+  color: var(--lifeos-color-brand);
+}
+
+[data-ui="focus-controls"] [data-variant="secondary"],
+[data-ui="focus-controls"] [data-variant="ghost"] {
+  border-color: color-mix(in srgb, currentColor 42%, transparent);
+  color: inherit;
+}
+
+[data-ui="focus-controls"] [data-variant="secondary"]:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+[data-ui="focus-end-flow"] {
+  display: grid;
+  inline-size: min(100%, 32rem);
+  gap: var(--lifeos-space-sm);
+  padding: var(--lifeos-space-md);
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-inline-start: 3px solid currentColor;
+  border-radius: var(--lifeos-radius-card);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  text-align: start;
+}
+
+[data-ui="focus-end-flow"][data-complete="true"] {
+  border-color: color-mix(in srgb, currentColor 34%, transparent);
+  border-inline-start-color: var(--lifeos-color-on-brand);
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+
+[data-ui="focus-end-flow"] h3 {
+  margin: 0;
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="focus-end-flow"] p {
+  max-inline-size: 48ch;
+  margin: 0;
+  color: color-mix(in srgb, currentColor 78%, transparent);
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="focus-end-choices"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="focus-end-choices"] > button {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+}
+
+[data-ui="focus-end-choices"] [data-variant="primary"] {
+  background: var(--lifeos-color-on-brand);
+  color: var(--lifeos-color-brand);
+}
+
+[data-ui="focus-end-choices"] [data-variant="secondary"],
+[data-ui="focus-end-choices"] [data-variant="ghost"] {
+  border-color: color-mix(in srgb, currentColor 42%, transparent);
+  color: inherit;
+}
+
+[data-ui="focus-end-choices"] [data-variant="secondary"]:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+[data-ui="focus-end-choices"] [data-ui="meta"] {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 28rem) {
+  [data-ui="focus-end-choices"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+[data-ui="focus-feedback-settings"] {
+  inline-size: min(100%, 28rem);
+  margin-block-start: var(--lifeos-space-sm);
+  border-block-start: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  text-align: start;
+}
+
+[data-ui="focus-feedback-settings"] summary {
+  padding-block: var(--lifeos-space-sm);
+  cursor: pointer;
+  font-weight: 600;
+  list-style-position: inside;
+}
+
+[data-ui="focus-feedback-options"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  padding-block: 0 var(--lifeos-space-sm);
+}
+
+[data-ui="focus-feedback-options"] label {
+  display: flex;
+  min-block-size: var(--lifeos-touch-min);
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="focus-feedback-options"] input[type="checkbox"] {
+  flex: none;
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  accent-color: var(--lifeos-color-on-brand);
+}
+
+/* T167: ajatusparkki pysyy fokusistunnon sisällä ja visuaalisesti hiljaisena.
+   Ajastin säilyy pääelementtinä; kirjaukset ovat yksi jaettu tekstilista. */
+[data-ui="focus-distraction"] {
+  inline-size: min(100%, 28rem);
+  margin-block-start: var(--lifeos-space-xs);
+  text-align: start;
+}
+
+button[data-ui="focus-distraction-trigger"] {
+  min-block-size: var(--lifeos-touch-min);
+  color: inherit;
+  border: 1px solid color-mix(in srgb, currentColor 38%, transparent);
+  border-radius: var(--lifeos-radius-control);
+}
+
+button[data-ui="focus-distraction-trigger"]:hover {
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+
+[data-ui="focus-distraction-count"] {
+  min-inline-size: 1.5rem;
+  padding-inline: var(--lifeos-space-2xs);
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  font-size: var(--lifeos-font-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+[data-ui="focus-distraction-panel"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  padding-block: var(--lifeos-space-sm);
+  border-block-start: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+}
+
+[data-ui="focus-distraction-panel"][hidden] {
+  display: none;
+}
+
+[data-ui="focus-distraction-intro"] {
+  max-inline-size: 42ch;
+  margin: 0;
+  color: color-mix(in srgb, currentColor 78%, transparent);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="focus-distraction-form"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="focus-distraction-form"] label {
+  font-size: var(--lifeos-font-sm);
+  font-weight: 600;
+}
+
+[data-ui="focus-distraction-form"] textarea[data-ui="input"] {
+  min-block-size: 5rem;
+  resize: vertical;
+}
+
+[data-ui="focus-distraction-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="focus-distraction-actions"] [data-variant="primary"] {
+  background: var(--lifeos-color-on-brand);
+  color: var(--lifeos-color-brand);
+}
+
+[data-ui="focus-distraction-actions"] [data-variant="ghost"] {
+  color: inherit;
+}
+
+[data-ui="focus-distraction-list"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="focus-distraction-list"] h3 {
+  margin: 0;
+  font-size: var(--lifeos-font-md);
+  font-weight: 600;
+}
+
+[data-ui="focus-distraction-list"] ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="focus-distraction-list"] li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--lifeos-space-sm);
+  padding-block: var(--lifeos-space-xs);
+  border-block-start: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+
+[data-ui="focus-distraction-list"] li span {
+  overflow-wrap: anywhere;
+}
+
+[data-ui="focus-distraction-list"] time {
+  color: color-mix(in srgb, currentColor 68%, transparent);
+  font-size: var(--lifeos-font-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+[data-ui="focus-distraction-empty"],
+[data-ui="focus-distraction-status"],
+[data-ui="focus-distraction-error"] {
+  margin: 0;
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="focus-distraction-error"] {
+  color: #ffd8df;
+}
+
+/* T172: keskeytys kirjataan omana lukuna, erillään ajatusparkista.
+   Historia jatkaa fokusnäkymää kevyenä, helposti silmäiltävänä listana. */
+[data-ui="focus-interruption"] {
+  display: flex;
+  inline-size: min(100%, 28rem);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lifeos-space-xs) var(--lifeos-space-sm);
+  padding-block-start: var(--lifeos-space-sm);
+  border-block-start: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+}
+
+[data-ui="focus-interruption"] [data-ui="meta"] {
+  color: color-mix(in srgb, currentColor 78%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="focus-interruption"] button {
+  min-block-size: var(--lifeos-touch-min);
+  border-color: color-mix(in srgb, currentColor 38%, transparent);
+  color: inherit;
+}
+
+[data-ui="focus-interruption"] button:hover {
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+
+[data-ui="focus-weekly-stats"] {
+  inline-size: min(48rem, 100%);
+  margin: var(--lifeos-space-xl) auto 0;
+}
+
+[data-ui="focus-secondary-info"] {
+  inline-size: min(48rem, 100%);
+  margin: var(--lifeos-space-xl) auto var(--lifeos-space-2xl);
+}
+
+[data-ui="focus-secondary-info"] > summary {
+  display: flex;
+  min-block-size: var(--lifeos-touch-min);
+  align-items: center;
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+[data-ui="focus-secondary-info"][open] > summary {
+  border-end-end-radius: 0;
+  border-end-start-radius: 0;
+}
+
+[data-ui="focus-secondary-info-content"] {
+  padding-block-end: var(--lifeos-space-xs);
+  border: 1px solid var(--lifeos-color-border);
+  border-block-start: 0;
+  border-end-end-radius: var(--lifeos-radius-card);
+  border-end-start-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="focus-secondary-info-content"] [data-ui="focus-weekly-stats"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-ui="focus-secondary-info-content"] [data-ui="focus-history"] {
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="focus-weekly-stats"] [data-ui="stat-chip"] {
+  margin-block-end: var(--lifeos-space-xs);
+}
+
+[data-ui="focus-weekly-stats"] [data-ui="chart-frame"] {
+  margin-block-end: 0;
+}
+
+[data-ui="focus-weekly-bars"] {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="focus-weekly-bars"][data-range="day"] {
+  grid-template-columns: minmax(5rem, 8rem);
+  justify-content: center;
+}
+
+[data-ui="focus-weekly-day"] {
+  display: grid;
+  min-inline-size: 0;
+  grid-template-rows: auto 7rem auto;
+  align-items: end;
+  gap: var(--lifeos-space-2xs);
+  text-align: center;
+}
+
+[data-ui="focus-weekly-value"] {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+[data-ui="focus-weekly-track"] {
+  display: flex;
+  block-size: 100%;
+  align-items: end;
+  justify-content: center;
+  overflow: hidden;
+  border-block-end: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control) var(--lifeos-radius-control) 0 0;
+  background: color-mix(in srgb, var(--lifeos-color-muted) 8%, transparent);
+}
+
+[data-ui="focus-weekly-track"] > span {
+  inline-size: min(2rem, 72%);
+  border-radius: var(--lifeos-radius-control) var(--lifeos-radius-control) 0 0;
+  background: var(--lifeos-color-accent);
+}
+
+[data-ui="focus-weekly-label"] {
+  overflow-wrap: anywhere;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lifeos-line-meta);
+}
+
+[data-ui="focus-history"] {
+  inline-size: min(48rem, 100%);
+  margin: var(--lifeos-space-xl) auto var(--lifeos-space-2xl);
+  padding: var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+}
+
+[data-ui="focus-history-header"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-md);
+  padding-block-end: var(--lifeos-space-sm);
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="focus-history-header"] h2 {
+  margin: 0;
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="focus-history-header"] [data-ui="meta"] {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="focus-history-empty"] {
+  margin: var(--lifeos-space-sm) 0 0;
+  color: var(--lifeos-color-muted);
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="focus-history-xp-rules"] {
+  margin: var(--lifeos-space-sm) 0 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+  line-height: var(--lifeos-line-body);
+}
+
+[data-ui="focus-history-list"] {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="focus-history-item"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  padding-block: var(--lifeos-space-sm);
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="focus-history-item"]:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+[data-ui="focus-history-xp"] {
+  color: var(--lifeos-color-accent);
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+[data-ui="focus-history-item-heading"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-md);
+}
+
+[data-ui="focus-history-item-heading"] h3 {
+  margin: 0;
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="focus-history-item-heading"] time {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="focus-history-item"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+@media (max-width: 480px) {
+  [data-ui="focus-distraction-actions"] {
+    flex-direction: column;
+  }
+
+  [data-ui="focus-distraction-actions"] button {
+    inline-size: 100%;
+  }
+
+  [data-ui="focus-interruption"] {
+    flex-direction: column;
+  }
+
+  [data-ui="focus-interruption"] button {
+    inline-size: 100%;
+  }
+}
+
+[data-ui="focus-exit"] {
+  color: inherit;
+  font-weight: 600;
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.25em;
+}
+
+[data-ui="focus-error"] {
+  max-inline-size: 42ch;
+  margin: 0;
+  color: #ffd8df;
+}
+
+[data-ui="focus-fullscreen"] button:focus-visible,
+[data-ui="focus-fullscreen"] a:focus-visible {
+  outline-color: currentColor;
+}
+
+[data-ui="content-column"]:has([data-ui="focus-fullscreen"]) main {
+  max-inline-size: none;
+}
+
+[data-ui="content-column"]:has([data-ui="focus-fullscreen"]) > [data-ui="aside"] {
+  display: none;
+}
+
+[data-ui="content-column"]:has([data-ui="focus-fullscreen"]) [data-ui="fab"] {
+  display: none;
+}
+
+[data-ui="bottom-nav"] {
+  position: sticky;
+  inset-block-end: 0;
+  padding-block-end: env(safe-area-inset-bottom, 0px);
+  background: var(--lifeos-color-surface);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="bottom-nav"] ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  /* T096: 6. sarake (Haku) mahtuu 390px:iin 150 %:n fonttiskaalallakin:
+     sivupadding pois, vain riviväli (safe-area säilyy navin omassa
+     padding-block-endissä). Sarakeleveys tulee flex:1:stä. */
+  padding: var(--lifeos-space-xs) 0;
+}
+
+[data-ui="bottom-nav"] li {
+  flex: 1;
+}
+
+[data-ui="rail"] a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--lifeos-space-xs);
+  min-block-size: var(--lifeos-touch-min);
+  min-inline-size: var(--lifeos-touch-min);
+  padding-inline: var(--lifeos-space-sm);
+  color: var(--lifeos-color-text);
+  text-decoration: none;
+  border-radius: var(--lifeos-radius-control);
+  font-family: inherit;
+  font-size: var(--lifeos-font-sm);
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+/* T044: bottom-nav on ahdas (5 kohdetta 390px:ssä) — ikoni labelin päällä,
+   pieni label, ei ylivuotoa. Rail pitää rivimallin (leveä tila). */
+[data-ui="bottom-nav"] a,
+[data-ui="more-button"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  inline-size: 100%;
+  min-block-size: var(--lifeos-touch-min);
+  min-inline-size: 0;
+  padding-block: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-text);
+  text-decoration: none;
+  border-radius: var(--lifeos-radius-control);
+  font-family: inherit;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="bottom-nav"] a span:last-child,
+[data-ui="more-button"] span:last-child {
+  font-size: var(--lifeos-font-xs);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Ei pelkkää väriä (§31): aktiivinen kertoo myös muodolla (pinta +
+   painavampi teksti), aria-current tulee AppShellistä. */
+[data-ui="bottom-nav"] a[aria-current="page"],
+[data-ui="rail"] a[aria-current="page"],
+[data-ui="more-button"][aria-current="page"] {
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  font-weight: 700;
+}
+
+/* T044: Lisää-painike on nappi navin joukossa (dialogi, ei reitti):
+   sama koko + pinta, läpinäkyvä tausta lepotilassa. */
+/* T096: hakunappi jakaa more-buttonin muodon (bottom-navin 5. sarake);
+   rail-versio on rail-rivin levyinen hakupainike brändin alla. */
+[data-ui="search-rail-button"] {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  inline-size: 100%;
+  min-block-size: var(--lifeos-touch-min);
+  padding-inline: var(--lifeos-space-sm);
+  background: transparent;
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  color: var(--lifeos-color-muted);
+  font-family: inherit;
+  font-size: var(--lifeos-font-sm);
+  cursor: pointer;
+}
+
+[data-ui="search-rail-button"] kbd {
+  margin-inline-start: auto;
+  font-family: inherit;
+  font-size: var(--lifeos-font-xs);
+  color: var(--lifeos-color-muted);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  padding-inline: var(--lifeos-space-2xs);
+}
+
+[data-ui="more-button"] {
+  inline-size: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+[data-ui="more-button"][aria-expanded="true"] {
+  border-color: var(--lifeos-color-border);
+}
+
+/* T044: Lisää-drawer (mobiilin secondary-nav): bottom-sheet (radius 20,
+   brief §4) safe-arealla; scrim himmentää; suljettuna piilossa mutta DOM:ssa
+   (inert + aria-hidden, ei focus-vuotoa). */
+[data-ui="drawer-scrim"] {
+  position: fixed;
+  inset: 0;
+  background: rgb(16 25 21 / 0.45);
+}
+
+[data-ui="more-drawer"] {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  max-block-size: 70dvh;
+  overflow-y: auto;
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+  border-start-start-radius: var(--lifeos-radius-sheet);
+  border-start-end-radius: var(--lifeos-radius-sheet);
+  padding: var(--lifeos-space-md);
+  padding-block-end: calc(var(--lifeos-space-md) + env(safe-area-inset-bottom, 0px));
+  box-shadow: var(--lifeos-elevation-3);
+}
+
+[data-ui="more-drawer"]:not([data-open]) {
+  display: none;
+}
+
+[data-ui="more-drawer-header"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="more-drawer-title"] {
+  font-weight: 700;
+  font-size: var(--lifeos-font-lg);
+  margin: 0;
+}
+
+[data-ui="more-drawer-close"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--lifeos-touch-min);
+  min-block-size: var(--lifeos-touch-min);
+  background: transparent;
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  color: inherit;
+  cursor: pointer;
+}
+
+[data-ui="more-drawer"] ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2xs);
+  list-style: none;
+  margin: var(--lifeos-space-sm) 0 0;
+  padding: 0;
+}
+
+[data-ui="more-drawer"] a {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  min-block-size: var(--lifeos-touch-min);
+  color: var(--lifeos-color-text);
+  text-decoration: none;
+  border-radius: var(--lifeos-radius-control);
+  padding-inline: var(--lifeos-space-xs);
+}
+
+[data-ui="more-drawer"] a[aria-current="page"] {
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  font-weight: 700;
+}
+
+/* T044: wide-sivupalkki (brief §4: vain hyödyllä, ≥1200px). Piilossa
+   kapeammilla; ei vie tilaa eikä kerää fokusta piilossa. */
+[data-ui="aside"] {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  [data-ui="content-column"] {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  [data-ui="content-column"] main {
+    flex: 1;
+  }
+
+  [data-ui="aside"] {
+    display: block;
+    flex: 0 1 18rem;
+    min-inline-size: 0;
+    inline-size: 18rem;
+    position: sticky;
+    inset-block-start: var(--lifeos-space-md);
+    margin: var(--lifeos-space-md) var(--lifeos-space-md) var(--lifeos-space-md) 0;
+    background: var(--lifeos-color-surface);
+    border: 1px solid var(--lifeos-color-border);
+    border-radius: var(--lifeos-radius-card);
+    padding: var(--lifeos-space-md);
+  }
+
+  [data-ui="aside-title"] {
+    font-weight: 700;
+    margin: 0 0 var(--lifeos-space-xs);
+  }
+
+  [data-ui="aside"] p {
+    margin-block: 0 var(--lifeos-space-xs);
+    font-size: var(--lifeos-font-sm);
+    color: var(--lifeos-color-muted);
+  }
+}
+
+/* T049: korttiperheet (anti-harmaa-laatikko, brief §4). Perhe erottuu
+   RAKENTEESTA: Toiminta (solidaarinen Kuusi, 1/näkymä) / Edistyminen (numero
+   + progress + sanallinen muutos) / Loki (rivit + jakajat) / Hiljainen
+   (reunaton, varjoton). card-hero-alias säilyy (T042 E2E + vanhat queryt). */
+[data-ui="card-action"],
+[data-ui="card-hero"] {
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-lg);
+  margin-block-end: var(--lifeos-space-md);
+  box-shadow: var(--lifeos-elevation-2);
+}
+
+[data-ui="card-action"] [data-ui="display-section"],
+[data-ui="card-hero"] h2 {
+  margin-block: 0 var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-xl);
+}
+
+[data-ui="card-action"] a,
+[data-ui="card-hero"] a {
+  color: inherit;
+}
+
+[data-ui="card-action"] [data-ui="display-hero"] {
+  margin-block: 0 var(--lifeos-space-sm);
+}
+
+/* T049-korjaus (kuvakritiikki): secondary/ghost/icon-napit card-actionin
+   sisällä perivät vaalean on-brand-värin — oletus ink-teksti tummalla
+   Kuusi-pinnalla oli lukukelvoton. currentColor toimii molemmissa teemoissa
+   (darkissa brand-pinta on vaalea, teksti tumma). Focus-rengas on-brandilla
+   (accent-Sammal ei erotu tummalla pinnalla). */
+[data-ui="card-action"] button[data-variant="secondary"],
+[data-ui="card-action"] [data-ui="icon-button"] {
+  color: var(--lifeos-color-on-brand);
+  border-color: currentColor;
+}
+
+[data-ui="card-action"] button[data-variant="secondary"]:hover,
+[data-ui="card-action"] [data-ui="icon-button"]:hover {
+  background: rgb(128 128 128 / 0.2);
+}
+
+[data-ui="card-action"] button[data-variant="ghost"] {
+  color: inherit;
+}
+
+[data-ui="card-action"] :focus-visible {
+  outline-color: var(--lifeos-color-on-brand);
+}
+
+[data-ui="card-action-body"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-xs);
+}
+
+/* Edistyminen: surface-pinta + numero + natiivi progress + muutoslause.
+   Sävy tulee sanasta + ikonista, ei taustaväristä (neutraali perusilme). */
+[data-ui="card-metric"] {
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-inline-start-width: 4px;
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+  box-shadow: var(--lifeos-elevation-1);
+}
+
+[data-ui="card-metric"][data-tone="info"] {
+  border-inline-start-color: var(--lifeos-color-info-border);
+}
+
+[data-ui="card-metric"][data-tone="success"] {
+  border-inline-start-color: var(--lifeos-color-success-border);
+}
+
+[data-ui="card-metric"][data-tone="warning"] {
+  border-inline-start-color: var(--lifeos-color-warning-border);
+}
+
+[data-ui="card-metric"][data-tone="neutral"] {
+  border-inline-start-color: var(--lifeos-color-accent);
+}
+
+[data-ui="card-metric"] [data-ui="display-section"] {
+  margin-block: 0 var(--lifeos-space-2xs);
+}
+
+[data-ui="card-metric-value"] {
+  margin-block: 0 var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-2xl);
+}
+
+/* T052: jaettu progress-palkki (natiivi progress; sama ilme kuin
+   MetricCardin palkki: accent-täyttö, pill-radius). Ura on reunaväristä
+   28 % sekoituksella (color-mix) — erottuu sekä sivun bg:stä ETTÄ kortin
+   surface-pinnasta (pelkkä bg-ura olisi näkymätön proben kaltaisessa
+   kortittomassa listassa; border/bg-kontrasti 3.5 light / 4.32 dark).
+   Koot sm/md; tekstivastine tulee elementin sisältä (ruudunlukija). */
+[data-ui="card-progress"],
+[data-ui="progress-bar"] {
+  inline-size: 100%;
+  block-size: 0.5rem;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--lifeos-color-border);
+  background-color: color-mix(in srgb, var(--lifeos-color-border) 28%, transparent);
+  margin-block: 0 var(--lifeos-space-xs);
+}
+
+[data-ui="progress-bar"][data-size="sm"] {
+  block-size: 0.375rem;
+}
+
+[data-ui="card-progress"]::-webkit-progress-bar,
+[data-ui="progress-bar"]::-webkit-progress-bar {
+  background-color: var(--lifeos-color-border);
+  background-color: color-mix(in srgb, var(--lifeos-color-border) 28%, transparent);
+  border-radius: 999px;
+}
+
+[data-ui="card-progress"]::-webkit-progress-value,
+[data-ui="progress-bar"]::-webkit-progress-value {
+  background: var(--lifeos-color-accent);
+  border-radius: 999px;
+}
+
+[data-ui="card-progress"]::-moz-progress-bar,
+[data-ui="progress-bar"]::-moz-progress-bar {
+  background: var(--lifeos-color-accent);
+  border-radius: 999px;
+}
+
+/* T052: progress-rengas (SVG; koko vakio 3.5rem — ei layout-hyppyä).
+   Ura sama sekoitus kuin palkilla (erottuu bg:stä ja surfacesta), täyttö
+   accentilla; pyöreät päät. Keskisisältö (prosentti tabular-numeroina)
+   absoluuttisesti keskellä; ulkomitta ei kasva. */
+[data-ui="progress-ring"] {
+  position: relative;
+  flex: none;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+}
+
+[data-ui="progress-ring-svg"] {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+[data-ui="progress-ring-track"] {
+  fill: none;
+  stroke: var(--lifeos-color-border);
+  stroke-opacity: 0.35;
+  stroke-width: 8;
+}
+
+[data-ui="progress-ring-fill"] {
+  fill: none;
+  stroke: var(--lifeos-color-accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+[data-ui="progress-ring-center"] {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--lifeos-font-xs);
+}
+
+/* T052: streak-pisteet (jatkuvuus listana; tila muodolla + sanalla, ei
+   värillä yksin §31). done = täysi accent-ympyrä; partial = puolikas
+   (conic-GRADIENTIN sijaan kiinteä 50/50-raja — ei koristegradienttia,
+   brief §4 kieltää vain koriste-gradientit); open = ääriviiva.
+   Ruudunlukijateksti visuaalisesti piilossa mutta luettavissa. */
+[data-ui="streak-dots"] {
+  display: flex;
+  gap: var(--lifeos-space-2xs);
+  list-style: none;
+  margin: 0 0 var(--lifeos-space-md);
+  padding: 0;
+}
+
+[data-ui="streak-dot"] {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  border-radius: 50%;
+  border: 2px solid var(--lifeos-color-border);
+  background: transparent;
+}
+
+[data-ui="streak-dot"][data-state="done"] {
+  background: var(--lifeos-color-accent);
+  border-color: var(--lifeos-color-accent);
+}
+
+[data-ui="streak-dot"][data-state="partial"] {
+  border-color: var(--lifeos-color-accent);
+  background: linear-gradient(to bottom, var(--lifeos-color-accent) 50%, transparent 50%);
+}
+
+[data-ui="streak-dot-sr"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* T052: tavoitekooste (rengas + luvut + sanallinen jatkumotila).
+   Numerot tabular; tila muted-lause (ei rankaisuprosenttia, §57.14). */
+[data-ui="goal-progress"] {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="goal-progress-body"] {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+[data-ui="goal-progress-numbers"] {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lifeos-space-xs);
+  margin: 0 0 var(--lifeos-space-2xs);
+}
+
+[data-ui="goal-progress-target"] {
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="goal-progress-status"] {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+/* T183: tason etenemä (rengas + tasonumero + luvut + jatkumolause).
+   Sama rakenne kuin goal-progressissa (Edistyminen-perhe); renkaan
+   keskellä tasonumero Display-painolla ja pieni "taso"-alaotsikko.
+   Ei uusia värejä: accent + muted + border riittävät. */
+[data-ui="level-progress"] {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="level-progress-body"] {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+[data-ui="level-progress-numbers"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-xs);
+  margin: 0 0 var(--lifeos-space-2xs);
+}
+
+/* Luku ei saa katketa väliin (tabular-numero pysyy yhtenäisenä kappaleena). */
+[data-ui="level-progress-numbers"] [data-ui="metric-value"] {
+  white-space: nowrap;
+}
+
+[data-ui="level-progress-target"] {
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="level-progress-status"] {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="level-progress-badge"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+[data-ui="level-progress-level"] {
+  font-family: var(--lifeos-font-family);
+  font-size: var(--lifeos-font-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--lifeos-color-text);
+}
+
+[data-ui="level-progress-caption"] {
+  font-size: var(--lifeos-font-xs);
+  font-weight: 500;
+  color: var(--lifeos-color-muted);
+  margin-block-start: 0.1rem;
+}
+
+[data-ui="card-metric-change"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-2xs);
+  margin: 0;
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="card-metric-body"] {
+  margin-block-start: var(--lifeos-space-xs);
+}
+
+/* T146: tavoitedetail. Päiväruudukko kertoo tilan muodolla ja sanalla;
+   väri toimii vain tukena. Seitsemän saraketta säilyttää viikon rytmin,
+   ja vaakasuuntainen vieritys suojaa päivälappujen luettavuutta mobiilissa. */
+[data-ui="goal-detail-header"] {
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="goal-detail-header"] [data-ui="display-page"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+[data-ui="goal-detail-header"] p {
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="goal-detail-facts"] {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--lifeos-space-xs);
+  margin: var(--lifeos-space-md) 0 0;
+}
+
+[data-ui="goal-detail-facts"] div {
+  padding-block-start: var(--lifeos-space-xs);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="goal-detail-facts"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 600;
+}
+
+[data-ui="goal-detail-facts"] dd {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="goal-detail-calendar"] {
+  overflow-x: auto;
+  padding-block-end: var(--lifeos-space-2xs);
+}
+
+[data-ui="goal-detail-weekdays"],
+[data-ui="goal-detail-grid"] {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(5rem, 1fr));
+  gap: var(--lifeos-space-2xs);
+  min-inline-size: 35rem;
+}
+
+[data-ui="goal-detail-weekdays"] {
+  margin-block-end: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 700;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+[data-ui="goal-detail-day"] {
+  display: flex;
+  min-block-size: 4.75rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2xs);
+  padding: var(--lifeos-space-xs);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="goal-detail-day"] strong {
+  font-size: var(--lifeos-font-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="goal-detail-day"] span {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 600;
+}
+
+[data-ui="goal-detail-day"] small {
+  color: var(--lifeos-color-link);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 700;
+}
+
+[data-ui="goal-detail-day"][data-state="success"] {
+  border-color: var(--lifeos-color-success-border);
+  background: var(--lifeos-color-success-bg);
+}
+
+[data-ui="goal-detail-day"][data-state="partial"] {
+  border-color: var(--lifeos-color-warning-border);
+  background: var(--lifeos-color-warning-bg);
+}
+
+[data-ui="goal-detail-day"][data-state="fail"] {
+  border-color: var(--lifeos-color-warning-border);
+  border-style: dashed;
+}
+
+[data-ui="goal-detail-day"][data-state="future"],
+[data-ui="goal-detail-day"][data-state="pending"] {
+  border-style: dashed;
+}
+
+[data-ui="goal-detail-day"][data-state="not-required"] {
+  opacity: 0.72;
+}
+
+[data-ui="goal-detail-day"][data-today="true"] {
+  outline: 2px solid var(--lifeos-color-accent);
+  outline-offset: 2px;
+}
+
+[data-ui="goal-detail-legend"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-xs) var(--lifeos-space-md);
+  list-style: none;
+  margin: var(--lifeos-space-md) 0 0;
+  padding: 0;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+}
+
+[data-ui="goal-detail-legend"] li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="goal-detail-legend"] li > span {
+  inline-size: 0.7rem;
+  block-size: 0.7rem;
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: 50%;
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="goal-detail-legend"] li[data-state="success"] > span {
+  border-color: var(--lifeos-color-success-border);
+  background: var(--lifeos-color-success-bg);
+}
+
+[data-ui="goal-detail-legend"] li[data-state="partial"] > span {
+  border-color: var(--lifeos-color-warning-border);
+  background: var(--lifeos-color-warning-bg);
+}
+
+[data-ui="goal-detail-legend"] li[data-state="fail"] > span,
+[data-ui="goal-detail-legend"] li[data-state="pending"] > span {
+  border-style: dashed;
+}
+
+[data-ui="goal-detail-status"] {
+  margin-block-end: var(--lifeos-space-2xs);
+}
+
+@media (max-width: 719px) {
+  [data-ui="goal-detail-facts"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-ui="goal-detail-weekdays"],
+  [data-ui="goal-detail-grid"] {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    min-inline-size: 0;
+    gap: var(--lifeos-space-3xs);
+  }
+
+  [data-ui="goal-detail-day"] {
+    min-block-size: 5rem;
+    align-items: center;
+    padding: var(--lifeos-space-2xs);
+    text-align: center;
+  }
+
+  [data-ui="goal-detail-day"] strong {
+    font-size: var(--lifeos-font-md);
+  }
+
+  [data-ui="goal-detail-day"] span,
+  [data-ui="goal-detail-day"] small {
+    font-size: 0.7rem;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* T053: chart frame (surface-kortti, §29: otsikko + yksikkö + range +
+   tekstivastine samassa kehyksessä). Range on SegmentedControl (oma
+   tyylinsä alla); canvas-slotti on neutraali alue rendererille (B03+).
+   Summary-details on natiivi (keyboard + touch ilman hover-JS:ää);
+   taulukko samoilla rivi/jakaja-säännöillä kuin LogCard. */
+[data-ui="chart-frame"] {
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+  box-shadow: var(--lifeos-elevation-1);
+}
+
+[data-ui="chart-frame"] [data-ui="display-section"] {
+  margin-block: 0 var(--lifeos-space-2xs);
+}
+
+[data-ui="chart-unit"] {
+  margin: 0 0 var(--lifeos-space-sm);
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="chart-canvas"] {
+  margin-block: var(--lifeos-space-sm);
+  min-block-size: 6rem;
+}
+
+/* T053-proben kevyt placeholder-palkisto (EI tuotantokomponentti: B03+:n
+   renderer korvaa tämän; palkit aria-hidden, data luetaan vastineesta). */
+[data-ui="chart-demo-bar"] {
+  inline-size: 1.5rem;
+  background: var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-control) var(--lifeos-radius-control) 0 0;
+}
+
+[data-ui="chart-canvas"][aria-hidden="true"] {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--lifeos-space-xs);
+  min-block-size: 7rem;
+}
+
+[data-ui="chart-baseline"] {
+  margin: 0 0 var(--lifeos-space-sm);
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="chart-summary"] {
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+[data-ui="chart-summary"] summary {
+  cursor: pointer;
+  font-weight: 700;
+  min-block-size: 2.75rem;
+  display: flex;
+  align-items: center;
+}
+
+[data-ui="chart-summary"] table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  margin-block-start: var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="chart-summary"] caption {
+  text-align: start;
+  font-weight: 700;
+  padding-block-end: var(--lifeos-space-2xs);
+}
+
+[data-ui="chart-summary"] th,
+[data-ui="chart-summary"] td {
+  text-align: start;
+  padding: var(--lifeos-space-2xs) var(--lifeos-space-xs);
+  border-block-start: 1px solid var(--lifeos-color-border);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-bp-legend"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-md);
+  list-style: none;
+  margin: 0 0 var(--lifeos-space-xs);
+  padding: 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-bp-legend"] li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="health-bp-legend"] li::before {
+  content: "";
+  inline-size: 1.5rem;
+  border-block-start: 3px solid var(--lifeos-color-accent);
+}
+
+[data-ui="health-bp-legend"] [data-series="diastolic"]::before {
+  border-block-start-style: dashed;
+  border-block-start-color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-bp-plot"] {
+  margin: 0;
+}
+
+[data-ui="health-bp-plot"] svg {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 12rem;
+  overflow: visible;
+}
+
+[data-ui="health-bp-plot"] svg text {
+  fill: var(--lifeos-color-muted);
+  font: 12px var(--lifeos-font-family);
+}
+
+[data-ui="health-bp-plot"] [data-ui="health-bp-y-tick"] line {
+  stroke: var(--lifeos-color-border);
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+}
+
+[data-ui="health-bp-plot"] [data-ui="health-bp-axis"] {
+  stroke: var(--lifeos-color-border);
+  stroke-width: 1.25;
+}
+
+[data-ui="health-bp-plot"] polyline {
+  fill: none;
+  stroke: var(--lifeos-color-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+[data-ui="health-bp-plot"] polyline[data-series="diastolic"] {
+  stroke: var(--lifeos-color-muted);
+  stroke-dasharray: 7 5;
+}
+
+[data-ui="health-bp-plot"] circle {
+  fill: var(--lifeos-color-accent);
+  stroke: var(--lifeos-color-surface);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+[data-ui="health-bp-plot"] circle[data-series="diastolic"] {
+  fill: var(--lifeos-color-muted);
+}
+
+[data-ui="health-bp-plot"] figcaption {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+@media (max-width: 719px) {
+  [data-ui="health-bp-plot"] svg text {
+    font-size: 24px;
+  }
+}
+
+[data-ui="health-bp-history-list"] h3 {
+  margin: var(--lifeos-space-lg) 0 var(--lifeos-space-2xs);
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="health-bp-history-list"] > [data-ui="meta"] {
+  margin: 0 0 var(--lifeos-space-xs);
+}
+
+[data-ui="health-bp-history-list"] ol {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+[data-ui="health-bp-record"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--lifeos-space-2xs) var(--lifeos-space-md);
+  min-width: 0;
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+}
+
+[data-ui="health-bp-record"] time {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-bp-record"] strong {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-bp-record"] [data-ui="meta"] {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+@media (min-width: 720px) {
+  [data-ui="health-bp-history-list"] ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* T053: stat chip (kompakti tunnusluku: arvo tabular + label + sanallinen
+   trendi; ei värikoodia yksin, ei diagnoosikieltä §52). */
+[data-ui="stat-chip"] {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--lifeos-space-2xs);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  padding: var(--lifeos-space-2xs) var(--lifeos-space-sm);
+  margin-block-end: var(--lifeos-space-md);
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="stat-chip-label"] {
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="stat-chip-trend"] {
+  font-size: var(--lifeos-font-sm);
+  font-weight: 700;
+}
+
+/* T056-tukimuutos: E2E-näyteikkunan osiovalinta (?e2e=1 — ei tuotantopinta).
+   Kehitysnäkymän palkki ryhmittelee pitkän osiolistan, mutta säilyttää
+   tavalliset linkit, 44px kosketuskorkeuden ja aktiivisen tilan. */
+[data-ui="probe-tabs"] {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px 8px;
+  margin: 0 0 var(--lifeos-space-md);
+  border: 1px solid color-mix(in srgb, var(--lifeos-color-border) 28%, transparent);
+  border-radius: 16px;
+  background: var(--lifeos-color-surface);
+  box-shadow: 0 2px 8px rgb(16 25 21 / 0.035);
+}
+
+[data-ui="probe-tabs-header"] {
+  padding-inline: 6px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="probe-tabs-header"] > div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="probe-tabs-eyebrow"] {
+  color: var(--lifeos-color-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: var(--lifeos-line-meta);
+  text-transform: none;
+}
+
+[data-ui="probe-tabs-title"] {
+  font-size: 0.78rem;
+  line-height: var(--lifeos-line-display);
+}
+
+[data-ui="probe-tabs-count"] {
+  flex: none;
+  color: var(--lifeos-color-muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: var(--lifeos-line-meta);
+}
+
+[data-ui="probe-tabs-controls"] {
+  display: grid;
+  grid-template-columns: var(--lifeos-touch-min) minmax(0, 1fr) var(--lifeos-touch-min);
+  align-items: center;
+  gap: var(--lifeos-space-2xs);
+  min-inline-size: 0;
+}
+
+[data-ui="probe-tab-arrow"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--lifeos-touch-min);
+  min-inline-size: var(--lifeos-touch-min);
+  border: 1px solid color-mix(in srgb, var(--lifeos-color-border) 24%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--lifeos-color-bg) 65%, var(--lifeos-color-surface));
+  color: var(--lifeos-color-text);
+  font-family: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    border-color var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    transform var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="probe-tab-arrow"]:hover:not(:disabled) {
+  border-color: var(--lifeos-color-accent);
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  transform: translateY(-1px);
+}
+
+[data-ui="probe-tab-arrow"]:focus-visible {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: var(--lifeos-focus-offset);
+}
+
+[data-ui="probe-tab-arrow"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+[data-ui="probe-tab-groups"] {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  min-inline-size: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 4px;
+}
+
+[data-ui="probe-tab-groups"]::-webkit-scrollbar {
+  display: none;
+}
+
+[data-ui="probe-tab-arrow"] svg {
+  width: 18px;
+  height: 18px;
+}
+
+[data-ui="probe-tab-group"] {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--lifeos-space-2xs);
+  min-inline-size: 0;
+}
+
+[data-ui="probe-tab-group"] + [data-ui="probe-tab-group"] {
+  padding-inline-start: var(--lifeos-space-xs);
+  border-inline-start: 1px solid color-mix(in srgb, var(--lifeos-color-border) 25%, transparent);
+}
+
+[data-ui="probe-tab-group-label"] {
+  color: var(--lifeos-color-muted);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: var(--lifeos-line-meta);
+  white-space: nowrap;
+  text-transform: none;
+}
+
+[data-ui="probe-tab-list"] {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--lifeos-space-2xs);
+  min-inline-size: 0;
+}
+
+[data-ui="probe-tab"] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--lifeos-touch-min);
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: calc(var(--lifeos-radius-control) - 2px);
+  color: var(--lifeos-color-text);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    border-color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="probe-tab"]:hover {
+  border-color: var(--lifeos-color-border);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="probe-tab"][aria-current="true"] {
+  background: color-mix(in srgb, var(--lifeos-color-brand) 9%, var(--lifeos-color-surface));
+  border-color: transparent;
+  color: var(--lifeos-color-text);
+  font-weight: 700;
+  box-shadow: none;
+}
+
+[data-ui="probe-tab"][aria-current="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--lifeos-color-accent);
+}
+
+[data-ui="probe-tab"]:focus-visible {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: -2px;
+}
+
+@media (max-width: 719px) {
+  [data-ui="probe-tabs"] {
+    padding-inline: var(--lifeos-space-xs);
+  }
+
+  [data-ui="probe-tab"] {
+    flex: none;
+  }
+}
+
+/* T058: typografiaosion ikoniritinä (kehitysnäkymä, ?e2e=1). Gridi
+   tasavälillä, ikoni + avain labelina — koko perhe näkyvissä kerralla. */
+[data-ui="icon-grid"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: var(--lifeos-space-xs);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--lifeos-space-md);
+}
+
+[data-ui="icon-grid-item"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lifeos-space-2xs);
+  padding: var(--lifeos-space-xs);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  font-size: var(--lifeos-font-xs);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="metric-inline"] {
+  margin: 0 0 var(--lifeos-space-sm);
+}
+
+/* Loki: rivit jakajilla (storage-facts-malli yleisenä); arvo tabular. */
+[data-ui="card-log"] {
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="card-log"] [data-ui="display-section"] {
+  margin-block: 0 var(--lifeos-space-xs);
+}
+
+[data-ui="card-log-list"] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+[data-ui="card-log-row"] {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-xs);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="card-log-row"]:first-child {
+  border-block-start: none;
+  padding-block-start: 0;
+}
+
+[data-ui="card-log-row"] p {
+  margin: 0;
+}
+
+[data-ui="card-log-value"] {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* T197: XP-ledger on aikajärjestetty tapahtumaloki. Pystylinja näyttää
+   tapahtumien järjestyksen; rivimäärä säilyy selkeänä myös mobiilissa. */
+[data-ui="xp-timeline-list"] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+[data-ui="xp-timeline-row"] {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-sm);
+}
+
+[data-ui="xp-timeline-row"] + [data-ui="xp-timeline-row"] {
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="xp-timeline-event"] {
+  position: relative;
+  min-inline-size: 0;
+  padding-inline-start: var(--lifeos-space-lg);
+}
+
+[data-ui="xp-timeline-event"]::before {
+  position: absolute;
+  inset-block: calc(-1 * var(--lifeos-space-sm)) calc(-1 * var(--lifeos-space-sm));
+  inset-inline-start: 0.28rem;
+  inline-size: 1px;
+  background: var(--lifeos-color-border);
+  content: "";
+}
+
+[data-ui="xp-timeline-event"]::after {
+  position: absolute;
+  inset-block-start: 0.42rem;
+  inset-inline-start: 0;
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  border: 2px solid var(--lifeos-color-brand-ink);
+  border-radius: 50%;
+  background: var(--lifeos-color-surface);
+  content: "";
+}
+
+[data-ui="xp-timeline-title"],
+[data-ui="xp-timeline-reason"] {
+  margin: 0;
+}
+
+[data-ui="xp-timeline-source-link"] {
+  color: inherit;
+  text-decoration-color: var(--lifeos-color-border);
+  text-underline-offset: 0.15em;
+}
+
+[data-ui="xp-timeline-reason"] {
+  margin-block-start: var(--lifeos-space-3xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="xp-timeline-time"] {
+  display: block;
+  margin-block-start: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+}
+
+[data-ui="xp-timeline-amount"] {
+  padding-block-start: 0.15rem;
+  color: var(--lifeos-color-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+[data-ui="xp-timeline-amount"][data-sign="positive"] {
+  color: var(--lifeos-color-success-text);
+}
+
+[data-ui="xp-timeline-more"] {
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+@media (max-width: 30rem) {
+  [data-ui="xp-timeline-row"] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lifeos-space-2xs);
+  }
+
+  [data-ui="xp-timeline-amount"] {
+    padding-inline-start: var(--lifeos-space-lg);
+  }
+}
+
+/* T084: rutiinin askeleet kortin sisällä — numeroitu sisennys, ei omaa
+   laatikkoa; perii LogCard-rivien rytmin. */
+[data-ui="routine-steps"] {
+  margin: var(--lifeos-space-2xs) 0 0;
+  padding-inline-start: var(--lifeos-space-md);
+}
+
+[data-ui="routine-steps"] li {
+  margin-block: var(--lifeos-space-2xs) 0;
+}
+
+[data-ui="routine-steps"] li[data-state="current"] {
+  color: var(--lifeos-color-brand-ink);
+  font-weight: 700;
+}
+
+[data-ui="routine-next-step"] {
+  margin: var(--lifeos-space-xs) 0 0;
+  color: var(--lifeos-color-brand-ink);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 700;
+}
+
+[data-ui="card-log-row"] [data-ui="progress-bar"] {
+  margin-block: var(--lifeos-space-xs) var(--lifeos-space-2xs);
+}
+
+/* Hiljainen: ei reunaa, ei varjoa — bg-pinta erottaa taustasta. */
+[data-ui="card-quiet"] {
+  background: var(--lifeos-color-bg);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="card-quiet"] [data-ui="display-section"] {
+  margin-block: 0 var(--lifeos-space-xs);
+}
+
+/* T189: saavutusmerkki (§54 AchievementCard). Rivi-indeksi hiusviivajakajilla
+   (LogCard-rytmi, ei laatikkopakkaa). Tila näkyy MERKIN muotona: ansaittu =
+   täytetty Sammal-ympyrä + check (on-brand-väri), odottava = ääriviivaympyrä
+   (StreakDot "open" -sanasto). Otsikko pysyy voimassa kummallakin tilalla —
+   odottava ei ole häpeä vaan kutsu (§51, §57.14). */
+[data-ui="achievement-card"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-sm);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="achievement-card"]:first-child {
+  border-block-start: none;
+  padding-block-start: 0;
+}
+
+[data-ui="achievement-mark"] {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: 50%;
+  margin-block-start: 0.125rem;
+}
+
+[data-ui="achievement-mark"][data-state="earned"] {
+  background: var(--lifeos-color-accent);
+  color: var(--lifeos-color-on-brand);
+}
+
+[data-ui="achievement-mark"][data-state="locked"] {
+  background: transparent;
+  border: 2px solid var(--lifeos-color-border);
+}
+
+[data-ui="achievement-body"] {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+[data-ui="achievement-body"] p {
+  margin: 0;
+}
+
+[data-ui="achievement-status"] {
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="achievement-card"][data-state="earned"] [data-ui="achievement-status"] {
+  font-weight: 500;
+  color: var(--lifeos-color-text);
+}
+
+[data-ui="achievement-summary"] {
+  margin: 0 0 var(--lifeos-space-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="achievement-list"] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* T191: Journey/Constellation -keräily (§9 teema constellation/journey).
+   Taivas-paneeli on koriste (sisältö luetaan luettelosta §31): nouseva polku
+   hiusviivoina; ansaitut yhteydet syttyvät accentilla (rohkea elementti),
+   odottavat jäävät hämäriksi. Merkit samalla sanastolla kuin AchievementCard:
+   täytetty Sammal = ansaittu, ääriviiva = odottava. Muoto koodaa lajin —
+   ympyrä = tähti, vinoneliö = alue (muoto = tietoa, ei koristetta). */
+[data-ui="journey-sky"] {
+  background: var(--lifeos-color-bg);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-sm);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="journey-sky-svg"] {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+[data-ui="journey-summary"] {
+  margin: 0 0 var(--lifeos-space-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="journey-list"] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+[data-ui="journey-row"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-sm);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="journey-row"]:first-child {
+  border-block-start: none;
+  padding-block-start: 0;
+}
+
+[data-ui="journey-row-mark"] {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-block-start: 0.3rem;
+  background: transparent;
+  border: 2px solid var(--lifeos-color-border);
+}
+
+[data-ui="journey-row-mark"][data-shape="star"] {
+  border-radius: 50%;
+}
+
+[data-ui="journey-row-mark"][data-shape="region"] {
+  border-radius: 2px;
+  transform: rotate(45deg);
+  margin-inline: 0.15rem;
+}
+
+[data-ui="journey-row-mark"][data-state="earned"] {
+  background: var(--lifeos-color-accent);
+  border-color: var(--lifeos-color-accent);
+}
+
+[data-ui="journey-row-body"] {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+[data-ui="journey-row-body"] p {
+  margin: 0;
+}
+
+[data-ui="journey-row"][data-state="earned"] strong {
+  font-weight: 700;
+}
+
+/* Status: semanttinen kolmikko + ikoniotsikko (ei pelkkä väri, §31). */
+[data-ui="card-status"] {
+  border: 1px solid;
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="card-status"][data-tone="info"] {
+  background: var(--lifeos-color-info-bg);
+  color: var(--lifeos-color-info-text);
+  border-color: var(--lifeos-color-info-border);
+}
+
+[data-ui="card-status"][data-tone="success"] {
+  background: var(--lifeos-color-success-bg);
+  color: var(--lifeos-color-success-text);
+  border-color: var(--lifeos-color-success-border);
+}
+
+[data-ui="card-status"][data-tone="warning"] {
+  background: var(--lifeos-color-warning-bg);
+  color: var(--lifeos-color-warning-text);
+  border-color: var(--lifeos-color-warning-border);
+}
+
+[data-ui="card-status"][data-tone="danger"] {
+  background: var(--lifeos-color-danger-bg);
+  color: var(--lifeos-color-danger-text);
+  border-color: var(--lifeos-color-danger-border);
+}
+
+[data-ui="card-status-head"] {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  margin: 0 0 var(--lifeos-space-xs);
+}
+
+[data-ui="card-status-head"] [data-ui="display-section"] {
+  margin: 0;
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="card-status-body"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="card-status-body"] p {
+  margin: 0;
+}
+
+/* T042: storage-banneri (huomio/kriittinen): semanttinen kolmikko
+   bg+text+border + ikoni + label (tila ei pelkällä värillä, §31).
+   data-level tulee StorageBannerista; neutraalia tasoa ei tyylitetä
+   (banneri ei renderöidy ok/tuntematon-tasolla). */
+[data-ui="storage-banner"] {
+  border: 1px solid;
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="storage-banner"][data-level="huomio"] {
+  background: var(--lifeos-color-warning-bg);
+  color: var(--lifeos-color-warning-text);
+  border-color: var(--lifeos-color-warning-border);
+}
+
+[data-ui="storage-banner"][data-level="kriittinen"] {
+  background: var(--lifeos-color-danger-bg);
+  color: var(--lifeos-color-danger-text);
+  border-color: var(--lifeos-color-danger-border);
+}
+
+[data-ui="storage-banner"] a {
+  color: inherit;
+  font-weight: 700;
+}
+
+/* T042: virhekortti (error/warning, T037): sama kolmikkoperiaate.
+   data-level tulee ErrorCardista; otsikko saa fokuksen (§31). */
+[data-ui="error-card"] {
+  border: 1px solid;
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+  background: var(--lifeos-color-surface);
+  border-radius: var(--lifeos-radius-control);
+  border: 1px solid var(--lifeos-color-border);
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="error-card"][data-level="error"] {
+  background: var(--lifeos-color-danger-bg);
+  color: var(--lifeos-color-danger-text);
+  border-color: var(--lifeos-color-danger-border);
+}
+
+[data-ui="error-card"][data-level="warning"] {
+  background: var(--lifeos-color-warning-bg);
+  color: var(--lifeos-color-warning-text);
+  border-color: var(--lifeos-color-warning-border);
+}
+
+/* T042: storage-kortin dl-rivit: jakajat informaationa (Loki-perheen
+   esiaste; T049 eriyttää). dt on meta-ääni, dd pääteksti. */
+[data-ui="storage-facts"] {
+  margin: 0;
+}
+
+[data-ui="storage-facts"] > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-2xs);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="storage-facts"] > div:first-child {
+  border-block-start: none;
+}
+
+[data-ui="storage-facts"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="storage-facts"] dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+[data-ui="card"] {
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+  box-shadow: var(--lifeos-elevation-1);
+}
+
+[data-ui="card"] [data-ui="display-section"] {
+  margin-block: 0 var(--lifeos-space-xs);
+}
+
+/* T147: goal create wizard. The choice surface is deliberately quieter than
+   a dashboard card: the selected option is carried by a clear border, tint
+   and weight so the state never depends on colour alone. */
+[data-ui="goals-overview-header"] {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="goals-overview-header"] [data-ui="display-page"] {
+  margin-block-end: var(--lifeos-space-2xs);
+}
+
+[data-ui="goals-overview-lede"] {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+  max-inline-size: 42rem;
+}
+
+[data-testid="goal-create-wizard"] {
+  max-inline-size: 64rem;
+  border-color: var(--lifeos-color-brand);
+  box-shadow: var(--lifeos-elevation-2);
+}
+
+[data-ui="goal-wizard-intro"] {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lifeos-space-sm);
+  flex-wrap: wrap;
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="goal-wizard-intro"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="goal-wizard-steps"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--lifeos-space-xs);
+  list-style: none;
+  margin: 0 0 var(--lifeos-space-xl);
+  padding: 0;
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="goal-wizard-steps"] li {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  min-block-size: 2.75rem;
+  padding-block: var(--lifeos-space-xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 600;
+  border-block-end: 3px solid transparent;
+}
+
+[data-ui="goal-wizard-steps"] li > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  flex: none;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: var(--lifeos-font-xs);
+}
+
+[data-ui="goal-wizard-steps"] li[data-state="current"] {
+  color: var(--lifeos-color-brand-ink);
+  border-block-end-color: var(--lifeos-color-brand);
+}
+
+[data-ui="goal-wizard-steps"] li[data-state="current"] > span:first-child,
+[data-ui="goal-wizard-steps"] li[data-state="done"] > span:first-child {
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  border-color: var(--lifeos-color-brand);
+}
+
+[data-ui="goal-intent-picker"] {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+[data-ui="goal-intent-picker"] legend {
+  margin-block-end: var(--lifeos-space-2xs);
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+}
+
+[data-ui="goal-intent-picker"] > [data-ui="field-hint"] {
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="goal-intent-grid"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="goal-intent-card"] {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-sm);
+  min-block-size: 8rem;
+  padding: var(--lifeos-space-md);
+  background: var(--lifeos-color-bg);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  cursor: pointer;
+  transition:
+    border-color var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    box-shadow var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="goal-intent-card"]:hover {
+  border-color: var(--lifeos-color-accent);
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="goal-intent-card"] input {
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  flex: none;
+  margin: 0.1rem 0 0;
+  accent-color: var(--lifeos-color-brand);
+}
+
+[data-ui="goal-intent-card"][data-selected="true"] {
+  background: var(--lifeos-color-info-bg);
+  border: 2px solid var(--lifeos-color-brand);
+  box-shadow: var(--lifeos-elevation-1);
+}
+
+[data-ui="goal-intent-card"]:has(input:focus-visible) {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: var(--lifeos-focus-offset);
+}
+
+[data-ui="goal-intent-copy"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="goal-intent-copy"] strong {
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="goal-intent-copy"] span,
+[data-ui="goal-intent-copy"] small {
+  color: var(--lifeos-color-muted);
+  line-height: var(--lifeos-line-meta);
+}
+
+[data-ui="goal-intent-copy"] small {
+  margin-block-start: var(--lifeos-space-xs);
+  font-weight: 600;
+}
+
+[data-ui="goal-wizard-fields"] {
+  max-inline-size: 48rem;
+}
+
+[data-ui="goal-wizard-section-intro"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  margin-block-end: var(--lifeos-space-lg);
+  padding-inline-start: var(--lifeos-space-sm);
+  border-inline-start: 3px solid var(--lifeos-color-accent);
+}
+
+[data-ui="goal-wizard-section-intro"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="goal-wizard-date-grid"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="goal-wizard-note"] {
+  margin-block: var(--lifeos-space-md);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  background: var(--lifeos-color-info-bg);
+  color: var(--lifeos-color-info-text);
+  border-inline-start: 3px solid var(--lifeos-color-info-border);
+  border-radius: var(--lifeos-radius-control);
+}
+
+[data-ui="goal-wizard-note"] p {
+  margin: var(--lifeos-space-2xs) 0 0;
+  color: inherit;
+}
+
+[data-ui="goal-wizard-summary"] {
+  margin-block-start: var(--lifeos-space-lg);
+  padding: var(--lifeos-space-md);
+  background: var(--lifeos-color-bg);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+}
+
+[data-ui="goal-wizard-summary"] dl {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  margin: var(--lifeos-space-sm) 0 0;
+}
+
+[data-ui="goal-wizard-summary"] dl > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.35fr) 1fr;
+  gap: var(--lifeos-space-md);
+  padding-block-end: var(--lifeos-space-xs);
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="goal-wizard-summary"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="goal-wizard-summary"] dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+[data-ui="goal-wizard-actions"] {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--lifeos-space-sm);
+  margin-block-start: var(--lifeos-space-xl);
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+/* T148: tapaseuranta. Table semantics keep the compact calendar matrix
+   understandable to assistive technology; the scroll wrapper protects the
+   44px touch targets on narrow screens. */
+[data-testid="habit-tracker"] {
+  overflow: hidden;
+}
+
+[data-ui="habit-tracker-header"] {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="habit-tracker-header"] p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="habit-tracker-scroll"] {
+  overflow-x: auto;
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-bg);
+  scrollbar-color: var(--lifeos-color-border) transparent;
+}
+
+[data-ui="habit-tracker-table"] {
+  inline-size: 100%;
+  min-inline-size: 52rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+[data-ui="habit-tracker-table"] th,
+[data-ui="habit-tracker-table"] td {
+  border-block-end: 1px solid var(--lifeos-color-border);
+  border-inline-end: 1px solid var(--lifeos-color-border);
+  text-align: center;
+}
+
+[data-ui="habit-tracker-table"] thead th {
+  min-block-size: 4.25rem;
+  padding: var(--lifeos-space-xs);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+[data-ui="habit-tracker-table"] thead th:first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 2;
+  inline-size: 13rem;
+  padding-inline: var(--lifeos-space-sm);
+  color: var(--lifeos-color-text);
+  text-align: start;
+}
+
+[data-ui="habit-tracker-table"] thead th:not(:first-child) {
+  inline-size: 3rem;
+}
+
+[data-ui="habit-tracker-table"] thead th span,
+[data-ui="habit-tracker-table"] thead th strong,
+[data-ui="habit-tracker-table"] thead th small {
+  display: block;
+}
+
+[data-ui="habit-tracker-table"] thead th strong {
+  margin-block-start: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="habit-tracker-table"] thead th small {
+  margin-block-start: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-brand-ink);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 700;
+}
+
+[data-ui="habit-tracker-table"] thead th[data-today="true"] {
+  background: var(--lifeos-color-info-bg);
+  color: var(--lifeos-color-info-text);
+}
+
+[data-ui="habit-tracker-table"] tbody tr:last-child th,
+[data-ui="habit-tracker-table"] tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+[data-ui="habit-tracker-table"] th:last-child,
+[data-ui="habit-tracker-table"] td:last-child {
+  border-inline-end: 0;
+}
+
+[data-ui="habit-tracker-label"] {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  padding: var(--lifeos-space-sm);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+  text-align: start;
+  vertical-align: middle;
+}
+
+[data-ui="habit-tracker-label"] strong,
+[data-ui="habit-tracker-label"] [data-ui="meta"] {
+  display: block;
+}
+
+[data-ui="habit-tracker-label"] [data-ui="meta"] {
+  margin-block-start: var(--lifeos-space-2xs);
+}
+
+[data-ui="habit-tracker-table"] td {
+  block-size: 4.25rem;
+  padding: var(--lifeos-space-xs);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="habit-tracker-table"] td[data-today="true"] {
+  box-shadow:
+    inset 2px 0 0 var(--lifeos-color-accent),
+    inset -2px 0 0 var(--lifeos-color-accent);
+}
+
+[data-ui="habit-tracker-table"] td[data-state="done"] {
+  background: var(--lifeos-color-success-bg);
+}
+
+[data-ui="habit-tracker-table"] td[data-state="future"] {
+  color: var(--lifeos-color-muted);
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="habit-tracker-table"] td[data-state="outside"] {
+  color: var(--lifeos-color-muted);
+  background: var(--lifeos-color-surface);
+  opacity: 0.65;
+}
+
+[data-ui="habit-tracker-table"] td button,
+[data-ui="habit-tracker-table"] td > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--lifeos-touch-min);
+  block-size: var(--lifeos-touch-min);
+  border-radius: 50%;
+  font-size: var(--lifeos-font-lg);
+  font-weight: 700;
+}
+
+[data-ui="habit-tracker-table"] td button {
+  border: 1px solid var(--lifeos-color-border);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-muted);
+  cursor: pointer;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    border-color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="habit-tracker-table"] td button:hover {
+  border-color: var(--lifeos-color-accent);
+  color: var(--lifeos-color-brand-ink);
+}
+
+[data-ui="habit-tracker-table"] td[data-state="done"] button {
+  border-color: var(--lifeos-color-success-border);
+  background: var(--lifeos-color-success-text);
+  color: var(--lifeos-color-surface);
+}
+
+[data-ui="habit-tracker-table"] td > span {
+  color: inherit;
+}
+
+[data-ui="habit-tracker-legend"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-sm) var(--lifeos-space-md);
+  margin-block-start: var(--lifeos-space-md);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="habit-tracker-legend"] span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="habit-tracker-legend"] i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border-radius: 50%;
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  font-style: normal;
+  font-weight: 700;
+}
+
+[data-ui="habit-tracker-legend"] [data-state="done"] i {
+  background: var(--lifeos-color-success-text);
+  border-color: var(--lifeos-color-success-border);
+  color: var(--lifeos-color-surface);
+}
+
+/* T150: routine player. One clear current step and one large action keep the
+   mobile flow calm and usable with one hand; state is carried by text, marker
+   and border, not colour alone. */
+[data-ui="routine-player-header"] {
+  display: grid;
+  gap: var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="routine-player-header"] [data-ui="display-page"] {
+  margin-block-start: var(--lifeos-space-xs);
+}
+
+[data-ui="routine-player-header"] p {
+  margin: var(--lifeos-space-2xs) 0 0;
+  color: var(--lifeos-color-muted);
+  max-inline-size: 36rem;
+}
+
+[data-testid="routine-player-card"] {
+  max-inline-size: 44rem;
+  border-color: var(--lifeos-color-brand);
+}
+
+[data-ui="routine-player-summary"] {
+  display: grid;
+  grid-template-columns: minmax(8rem, auto) 1fr;
+  align-items: end;
+  gap: var(--lifeos-space-md);
+  padding-block-end: var(--lifeos-space-md);
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="routine-player-count"] {
+  display: inline-block;
+  margin-block-start: var(--lifeos-space-2xs);
+  font-size: var(--lifeos-font-2xl);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+[data-ui="routine-player-summary"] > div > span {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="routine-player-steps"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  list-style: none;
+  margin: var(--lifeos-space-md) 0 0;
+  padding: 0;
+}
+
+[data-ui="routine-player-steps"] li {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--lifeos-space-sm);
+  min-block-size: 4.25rem;
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="routine-player-steps"] li[data-state="current"] {
+  border: 2px solid var(--lifeos-color-brand);
+  background: var(--lifeos-color-info-bg);
+  box-shadow: var(--lifeos-elevation-1);
+}
+
+[data-ui="routine-player-steps"] li[data-state="done"] {
+  border-color: var(--lifeos-color-success-border);
+  background: var(--lifeos-color-success-bg);
+}
+
+[data-ui="routine-player-steps"] li[data-state="skipped"] {
+  border-style: dashed;
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="routine-player-step-marker"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: 50%;
+  color: var(--lifeos-color-muted);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-state="current"] [data-ui="routine-player-step-marker"] {
+  background: var(--lifeos-color-brand);
+  border-color: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+}
+
+[data-state="done"] [data-ui="routine-player-step-marker"] {
+  background: var(--lifeos-color-success-text);
+  border-color: var(--lifeos-color-success-text);
+  color: var(--lifeos-color-surface);
+}
+
+[data-ui="routine-player-steps"] li strong {
+  display: block;
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="routine-player-step-optional"] {
+  display: inline-block;
+  margin-block-start: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-info-text);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 700;
+}
+
+[data-ui="routine-player-actions"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  margin-block-start: var(--lifeos-space-md);
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="routine-player-actions"] > button {
+  inline-size: 100%;
+  min-block-size: 3.5rem;
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="routine-player-start-options"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="routine-player-start-options"] > p {
+  margin: 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="routine-player-start-actions"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="routine-player-start-actions"] > button {
+  min-block-size: 3.5rem;
+}
+
+[data-ui="routine-player-action-row"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="routine-player-action-row"] > button {
+  inline-size: 100%;
+  min-block-size: 3.5rem;
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="routine-player-skip-form"] {
+  display: grid;
+  gap: var(--lifeos-space-sm);
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="routine-player-skip-actions"] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="routine-player-skip-actions"] > button {
+  min-block-size: 2.75rem;
+}
+
+@media (max-width: 719px) {
+  [data-ui="routine-player-summary"] {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  [data-ui="routine-player-skip-actions"] {
+    grid-template-columns: 1fr;
+  }
+
+  [data-ui="routine-player-start-actions"] {
+    grid-template-columns: 1fr;
+  }
+}
+
+[data-ui="routine-player-complete"] {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  padding: var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-success-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-success-bg);
+}
+
+[data-ui="routine-player-complete"] strong {
+  color: var(--lifeos-color-success-text);
+}
+
+[data-testid="routine-player-history"] {
+  max-inline-size: 44rem;
+}
+
+[data-testid="routine-player-history"] p {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* T152: opt-in routine template library. The two-column layout gives the
+   choices equal weight; the note and step labels make the no-auto-create rule
+   and optional work visible without relying on colour alone. */
+[data-testid="routine-overview"] {
+  overflow: hidden;
+}
+
+[data-ui="routine-overview-header"] {
+  margin-block-end: var(--lifeos-space-sm);
+}
+
+[data-ui="routine-overview-header"] p {
+  max-inline-size: 44rem;
+  margin: var(--lifeos-space-2xs) 0 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="routine-template-note"] {
+  margin: 0 0 var(--lifeos-space-md);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  border-inline-start: 3px solid var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-info-bg);
+  color: var(--lifeos-color-info-text);
+}
+
+[data-ui="routine-template-grid"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="routine-template-card"] {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  padding: var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="routine-template-card-header"] {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="routine-template-card"] h3 {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-size: var(--lifeos-font-lg);
+}
+
+[data-ui="routine-template-card"] > p {
+  margin: var(--lifeos-space-sm) 0 0;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="routine-template-count"] {
+  flex: none;
+  padding: var(--lifeos-space-3xs) var(--lifeos-space-xs);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: 999px;
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+[data-ui="routine-template-steps"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  margin: var(--lifeos-space-md) 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="routine-template-steps"] li {
+  display: grid;
+  grid-template-columns: 0.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  min-block-size: 2.75rem;
+  padding-block: var(--lifeos-space-2xs);
+  border-block-end: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="routine-template-step-marker"] {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: var(--lifeos-color-brand);
+}
+
+[data-ui="routine-template-steps"] li [data-ui="meta"] {
+  color: var(--lifeos-color-info-text);
+  font-size: var(--lifeos-font-xs);
+}
+
+[data-ui="routine-template-card"] > button {
+  align-self: start;
+  min-block-size: var(--lifeos-touch-min);
+  margin-block-start: auto;
+}
+
+[data-ui="routine-existing-list"] {
+  margin-block-start: var(--lifeos-space-xl);
+  padding-block-start: var(--lifeos-space-md);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="routine-existing-heading"] {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-sm);
+  margin-block-end: var(--lifeos-space-xs);
+}
+
+[data-ui="routine-existing-heading"] > span {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="routine-existing-list"] ul {
+  display: grid;
+  gap: var(--lifeos-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="routine-existing-list"] li a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-sm);
+  min-block-size: var(--lifeos-touch-min);
+  padding: var(--lifeos-space-xs) var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+  text-decoration: none;
+}
+
+[data-ui="routine-existing-list"] li a:hover {
+  border-color: var(--lifeos-color-brand);
+}
+
+@media (max-width: 719px) {
+  [data-ui="routine-template-grid"] {
+    grid-template-columns: 1fr;
+  }
+
+  [data-ui="routine-template-card-header"],
+  [data-ui="routine-existing-heading"],
+  [data-ui="routine-existing-list"] li a {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  [data-ui="routine-template-steps"] li {
+    grid-template-columns: 0.5rem minmax(0, 1fr);
+  }
+
+  [data-ui="routine-template-steps"] li [data-ui="meta"] {
+    grid-column: 2;
+  }
+}
+
+/* T045: EmptyState keskittää vain oman sisältönsä; Card-otsikko pysyy
+   vasemmalla (brief: keskitys vain tyhjille tiloille). Meta-hint
+   perii muted-värin typografialta. T051: ikoni 2rem-ympyrässä (ei
+   emoji-dekoraatiota, §26) + toimintonapille tila. */
+[data-ui="empty-state"] {
+  padding: var(--lifeos-space-xl) var(--lifeos-space-md);
+  text-align: center;
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="empty-state"] p {
+  margin-inline: auto;
+}
+
+[data-ui="empty-state"] [data-ui="body"] strong {
+  color: var(--lifeos-color-text);
+}
+
+[data-ui="empty-icon"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 3rem;
+  block-size: 3rem;
+  border-radius: 50%;
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  color: var(--lifeos-color-muted);
+  margin-block-end: var(--lifeos-space-sm);
+}
+
+[data-ui="empty-icon"] [data-ui="icon"] {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+[data-ui="empty-action"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+/* T051: Skeleton-latauspaikkamerkit (viivat, pulssi-motion). Ei jatkuvaa
+   animaatiota muualla (§30); pulssi sammuu reduced-motionissa alla.
+   Ruudunlukijateksti on visuaalisesti piilossa mutta luettavissa. */
+[data-ui="skeleton"] {
+  padding-block: var(--lifeos-space-xs);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="skeleton-sr"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+[data-ui="skeleton-lines"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="skeleton-line"] {
+  block-size: 1rem;
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-border);
+  animation: lifeos-skeleton-pulse var(--lifeos-motion-slow) var(--lifeos-motion-easing) infinite
+    alternate;
+}
+
+[data-ui="skeleton-line"]:last-child {
+  inline-size: 62%;
+}
+
+@keyframes lifeos-skeleton-pulse {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* T051: Alert (kompakti inline-ilmoitus, control-radius 10 — vrt. kortti
+   14). Semanttinen kolmikko + ikoni + sanallinen otsikko (§31); tekstin
+   sisäiset linkit/napit perivät sävyn. Kevyempi kuin StatusCard
+   (ei h2:ta, säästää hierarkian kortin sisällä). */
+[data-ui="alert"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-sm);
+  border: 1px solid;
+  border-radius: var(--lifeos-radius-control);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="alert"][data-tone="info"] {
+  background: var(--lifeos-color-info-bg);
+  color: var(--lifeos-color-info-text);
+  border-color: var(--lifeos-color-info-border);
+}
+
+[data-ui="alert"][data-tone="success"] {
+  background: var(--lifeos-color-success-bg);
+  color: var(--lifeos-color-success-text);
+  border-color: var(--lifeos-color-success-border);
+}
+
+[data-ui="alert"][data-tone="warning"] {
+  background: var(--lifeos-color-warning-bg);
+  color: var(--lifeos-color-warning-text);
+  border-color: var(--lifeos-color-warning-border);
+}
+
+[data-ui="alert"][data-tone="danger"] {
+  background: var(--lifeos-color-danger-bg);
+  color: var(--lifeos-color-danger-text);
+  border-color: var(--lifeos-color-danger-border);
+}
+
+[data-ui="alert-icon"] {
+  display: inline-flex;
+  flex: none;
+  margin-block-start: 0.125rem;
+}
+
+[data-ui="alert-body"] {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+[data-ui="alert-title"] {
+  margin: 0 0 var(--lifeos-space-2xs);
+  font-weight: 700;
+}
+
+[data-ui="alert-text"] p {
+  margin: 0;
+}
+
+[data-ui="alert-action"] {
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+[data-ui="alert"] a {
+  color: inherit;
+  font-weight: 700;
+}
+
+/* T081: Today-header + sync-indikaattori (§4: päivä, tervehdys,
+   tallennus/offline-tila yhdellä hillityllä rivillä).
+   - today-header: vain pääotsikon alla olevat meta-rivit (ei omaa
+     pohjaa/laatikkoa, ei varjoa — pino sulautuu näkymään).
+   - sync-indicator: inline-flex-rivi tekstin perässä (wrap sallittu); piste
+     on koriste (aria-hidden), sävy tulee myös sanasta (label), ei pelkästä
+     väristä (§31). Sävyt olemassa olevilla tilaväreillä (ei uutta palettia). */
+[data-ui="today-header"] {
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="sync-indicator"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="sync-dot"] {
+  display: inline-block;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  flex: none;
+}
+
+[data-ui="sync-indicator"][data-tone="ok"] {
+  color: var(--lifeos-color-success-text);
+}
+
+[data-ui="sync-indicator"][data-tone="ok"] [data-ui="sync-dot"] {
+  background: var(--lifeos-color-success-text);
+}
+
+[data-ui="sync-indicator"][data-tone="varoitus"] {
+  color: var(--lifeos-color-warning-text);
+}
+
+[data-ui="sync-indicator"][data-tone="varoitus"] [data-ui="sync-dot"] {
+  background: var(--lifeos-color-warning-text);
+}
+
+[data-ui="sync-indicator"][data-tone="offline"] {
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="sync-indicator"][data-tone="offline"] [data-ui="sync-dot"] {
+  background: transparent;
+  border: 1px solid var(--lifeos-color-muted);
+}
+
+/* T051: Toast (ohimenevä palaute tekoon, §30). Kiinteä alareuna
+   safe-arealla; mobiilissa bottom-navin+FABin yläpuolella
+   (4.5rem ≈ nav 3.5rem + marginaali — ei peitä navigaatiota).
+   Viewport ei kaappaa klikkejä (tausta pysyy käytettävänä);
+   vain toast on klikattava. Ilme = Alertin kolmikko, kapeampi
+   mitta + varjo erottaa taustasta. Focus-rengas sävyn tekstivärillä. */
+[data-ui="toast-viewport"] {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lifeos-space-sm);
+  padding: var(--lifeos-space-md);
+  padding-block-end: calc(var(--lifeos-space-md) + env(safe-area-inset-bottom, 0px));
+  margin-block-end: 4.5rem;
+  pointer-events: none;
+}
+
+[data-ui="toast"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-sm);
+  inline-size: 100%;
+  max-inline-size: 28rem;
+  border: 1px solid;
+  border-radius: var(--lifeos-radius-control);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  box-shadow: var(--lifeos-elevation-3);
+  pointer-events: auto;
+}
+
+[data-ui="toast"][data-tone="info"] {
+  background: var(--lifeos-color-info-bg);
+  color: var(--lifeos-color-info-text);
+  border-color: var(--lifeos-color-info-border);
+}
+
+[data-ui="toast"][data-tone="success"] {
+  background: var(--lifeos-color-success-bg);
+  color: var(--lifeos-color-success-text);
+  border-color: var(--lifeos-color-success-border);
+}
+
+[data-ui="toast"][data-tone="warning"] {
+  background: var(--lifeos-color-warning-bg);
+  color: var(--lifeos-color-warning-text);
+  border-color: var(--lifeos-color-warning-border);
+}
+
+[data-ui="toast"][data-tone="danger"] {
+  background: var(--lifeos-color-danger-bg);
+  color: var(--lifeos-color-danger-text);
+  border-color: var(--lifeos-color-danger-border);
+}
+
+[data-ui="toast-icon"] {
+  display: inline-flex;
+  flex: none;
+  margin-block-start: 0.125rem;
+}
+
+[data-ui="toast-body"] {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+[data-ui="toast-title"] {
+  margin: 0;
+}
+
+[data-ui="toast-text"] {
+  margin: var(--lifeos-space-2xs) 0 0;
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="toast-action"] {
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+@media (min-width: 720px) {
+  [data-ui="toast-viewport"] {
+    margin-block-end: 0;
+  }
+}
+
+/* Numerot mittareissa aina tabular (brief §3); mittarikomponentit T044. */
+[data-ui="metric-value"] {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* T043: asetusten teemavalinta (radioryhmä; Segmented T048:ssä korvaa
+   visuaalisen ilmeen, rakenne säilyy). Kentät allekkain, kosketusisot. */
+[data-testid="theme-choice"] {
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-md);
+  margin: 0;
+}
+
+[data-testid="theme-choice"] legend {
+  padding-inline: var(--lifeos-space-2xs);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-testid="theme-choice"] label {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  min-block-size: var(--lifeos-touch-min);
+}
+
+[data-testid="theme-choice"] input[type="radio"] {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  accent-color: var(--lifeos-color-accent);
+}
+
+/* T195: yksi helposti tavoitettava asetus; esittely jää rauhalliseksi. */
+[data-testid="gamification-visibility-settings"] label {
+  display: flex;
+  min-block-size: var(--lifeos-touch-min);
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  font-weight: 600;
+}
+
+[data-ui="gamification-visibility-hint"] {
+  max-inline-size: var(--lifeos-measure);
+  margin-block: var(--lifeos-space-xs) 0;
+  color: var(--lifeos-color-muted);
+}
+
+/* T046: Button-perhe (§28: states/focus/disabled/loading/touch/dark-light).
+   Kaikki variantit tokeneista; lataus ei liikuta layoutia (teksti vaihtuu,
+   koko säilyy min-koosta). */
+button[data-variant] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lifeos-space-xs);
+  min-block-size: var(--lifeos-touch-min);
+  min-inline-size: var(--lifeos-touch-min);
+  padding-inline: var(--lifeos-space-md);
+  border-radius: var(--lifeos-radius-control);
+  font-family: inherit;
+  font-size: var(--lifeos-font-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    border-color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+button[data-variant="primary"] {
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  border: 1px solid transparent;
+}
+
+button[data-variant="primary"]:hover {
+  filter: brightness(1.08);
+}
+
+button[data-variant="secondary"] {
+  background: transparent;
+  color: var(--lifeos-color-text);
+  border: 1px solid var(--lifeos-color-border);
+}
+
+button[data-variant="secondary"]:hover {
+  background: var(--lifeos-color-surface);
+}
+
+/* T046: danger (tuhoava toiminto, semanttinen kolmikko) + ghost (hiljainen,
+   ei reunusta; hover nostaa pinnan). */
+button[data-variant="danger"] {
+  background: var(--lifeos-color-danger-bg);
+  color: var(--lifeos-color-danger-text);
+  border: 1px solid var(--lifeos-color-danger-border);
+}
+
+button[data-variant="danger"]:hover {
+  filter: brightness(0.97);
+}
+
+button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--lifeos-color-link);
+  border: 1px solid transparent;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+button[data-variant="ghost"]:hover {
+  background: var(--lifeos-color-surface);
+  text-decoration-thickness: 2px;
+}
+
+button[data-variant]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button[data-variant][data-loading="true"] {
+  cursor: progress;
+}
+
+/* T046: IconButton (44px, ikoni keskellä) + FAB (päätoiminto, aina sama
+   paikka: oikea alakulma, bottom-navin yläpuolella mobiilissa).
+   FAB on brand-pinta + on-brand-teksti (kontrasti 12.60/12.67). */
+[data-ui="icon-button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--lifeos-touch-min);
+  min-block-size: var(--lifeos-touch-min);
+  padding: 0;
+  background: transparent;
+  color: var(--lifeos-color-text);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  cursor: pointer;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="icon-button"]:hover {
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="icon-button"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+[data-ui="fab"] {
+  position: fixed;
+  inset-inline-end: var(--lifeos-space-md);
+  /* Mobiilissa bottom-nav (~68px: labelit+padding+safe-area) on aina
+     näkyvissä: FAB kelluu sen YLÄPUOLELLA (nav-korkeus + 12px väli),
+     ei navin päällä. Mitattu selaimessa (Playwright-boundingBox). */
+  inset-block-end: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  min-block-size: 3.5rem;
+  padding-inline: var(--lifeos-space-lg);
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: var(--lifeos-font-md);
+  font-weight: 700;
+  box-shadow: var(--lifeos-elevation-3);
+  cursor: pointer;
+  z-index: 10;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="fab"]:hover {
+  filter: brightness(1.08);
+}
+
+[data-ui="fab"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (min-width: 720px) {
+  [data-ui="fab"] {
+    position: sticky;
+    inset-block-end: var(--lifeos-space-lg);
+    margin-inline-start: auto;
+    margin-block-start: var(--lifeos-space-md);
+  }
+}
+
+/* T046-näyteikkuna (?e2e=1): staattinen FAB rivissä muiden kanssa. */
+[data-ui="fab-static"] [data-ui="fab"] {
+  position: static;
+  margin: 0;
+}
+
+/* T047: lomakekentät (§28: states/focus/disabled/error/touch/dark-light).
+   Natiivit kontrollit (input/select/datalist) LifeOS-pinnoilla; label aina
+   näkyvä (ei placeholder-labelia); virhe danger-kolmikolla + ikonilla +
+   tekstillä (ei pelkkä väri, §31). Kontrollin korkeus ≥44px. */
+[data-ui="field"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2xs);
+  margin-block-end: var(--lifeos-space-md);
+  max-inline-size: var(--lifeos-measure);
+}
+
+[data-ui="field-label"] {
+  font-size: var(--lifeos-font-sm);
+  font-weight: 700;
+  color: var(--lifeos-color-text);
+}
+
+[data-ui="field-hint"] {
+  margin: 0;
+  font-size: var(--lifeos-font-sm);
+  font-weight: 500;
+  line-height: var(--lifeos-line-meta);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="field-error"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-2xs);
+  margin: 0;
+  font-size: var(--lifeos-font-sm);
+  font-weight: 500;
+  color: var(--lifeos-color-danger-text);
+}
+
+[data-ui="input"] {
+  inline-size: 100%;
+  min-block-size: var(--lifeos-touch-min);
+  padding-inline: var(--lifeos-space-sm);
+  padding-block: var(--lifeos-space-xs);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  font-family: inherit;
+  font-size: var(--lifeos-font-md);
+  line-height: var(--lifeos-line-body);
+  transition: border-color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+[data-ui="input"]::placeholder {
+  color: var(--lifeos-color-muted);
+  opacity: 1;
+}
+
+[data-ui="input"]:hover {
+  border-color: var(--lifeos-color-accent);
+}
+
+[data-ui="input"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Virhe: danger-reuna + vaalea danger-pinta (ei pelkkä reuna); teksti +
+   ikoni kertovat myös sanallisesti (kentän alla, role=alert). */
+[data-ui="field"][data-invalid="true"] [data-ui="input"] {
+  border-color: var(--lifeos-color-danger-border);
+  border-width: 2px;
+  background: var(--lifeos-color-danger-bg);
+  color: var(--lifeos-color-danger-text);
+}
+
+[data-ui="input"]:focus-visible {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: var(--lifeos-focus-offset);
+}
+
+/* T048: date/time-indikaattori perii tekstivärin (dark-teemassa vaalea;
+   color-scheme: ks. tokens.css — selain tummuttaa natiivin pickerinkin). */
+[data-ui="input"][type="date"],
+[data-ui="input"][type="time"] {
+  color-scheme: inherit;
+}
+
+/* Select: natiivi nuoli pois (appearance:none) + oma chevron-koriste
+   oikeassa reunassa (ei peitä tekstiä; padding-inline-end varaa tilan). */
+[data-ui="select-wrap"] {
+  position: relative;
+  display: block;
+}
+
+[data-ui="select-wrap"] select[data-ui="input"] {
+  appearance: none;
+  padding-inline-end: calc(var(--lifeos-space-lg) + var(--lifeos-space-sm));
+  cursor: pointer;
+}
+
+[data-ui="select-wrap"] [data-ui="icon"] {
+  position: absolute;
+  inset-inline-end: var(--lifeos-space-sm);
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  pointer-events: none;
+  color: var(--lifeos-color-muted);
+}
+
+/* A3: yhteinen checkbox. Natiivi kontrolli säilyttää keyboard- ja
+   high-contrast-käytöksen; koko label on vähintään 44px kosketusalue. */
+[data-ui="checkbox"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-xs);
+  min-inline-size: var(--lifeos-touch-min);
+  min-block-size: var(--lifeos-touch-min);
+  color: var(--lifeos-color-text);
+  cursor: pointer;
+}
+
+[data-ui="checkbox"] > input[type="checkbox"] {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin: 0;
+  accent-color: var(--lifeos-color-accent);
+  cursor: inherit;
+}
+
+[data-ui="checkbox"] > input[type="checkbox"]:focus-visible {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: var(--lifeos-focus-offset);
+}
+
+[data-ui="checkbox"][data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* A3: switch säilyttää natiivin checkboxin näppäimistötoiminnot ja
+   switch-roolin; piilotettu input pysyy fokusoitavana ja label on 44px. */
+[data-ui="switch"] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-sm);
+  min-inline-size: var(--lifeos-touch-min);
+  min-block-size: var(--lifeos-touch-min);
+  color: var(--lifeos-color-text);
+  cursor: pointer;
+}
+
+[data-ui="switch"] > input[type="checkbox"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+[data-ui="switch-track"] {
+  display: flex;
+  flex: none;
+  align-items: center;
+  inline-size: 2.75rem;
+  block-size: 1.5rem;
+  padding: 2px;
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: 999px;
+  background: var(--lifeos-color-surface);
+  transition:
+    background-color var(--lifeos-motion-fast) var(--lifeos-motion-easing),
+    border-color var(--lifeos-motion-fast) var(--lifeos-motion-easing);
+}
+
+[data-ui="switch-track"] > span {
+  inline-size: 1rem;
+  block-size: 1rem;
+  border-radius: 50%;
+  background: var(--lifeos-color-muted);
+  transition:
+    margin-inline-start var(--lifeos-motion-fast) var(--lifeos-motion-easing),
+    background-color var(--lifeos-motion-fast) var(--lifeos-motion-easing);
+}
+
+[data-ui="switch"]:has(> input:checked) [data-ui="switch-track"] {
+  border-color: var(--lifeos-color-accent);
+  background: var(--lifeos-color-accent);
+}
+
+[data-ui="switch"]:has(> input:checked) [data-ui="switch-track"] > span {
+  margin-inline-start: auto;
+  background: var(--lifeos-color-surface);
+}
+
+[data-ui="switch"]:has(> input:focus-visible) [data-ui="switch-track"] {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: var(--lifeos-focus-offset);
+}
+
+[data-ui="switch"][data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (forced-colors: active) {
+  [data-ui="switch-track"] {
+    border-color: ButtonText;
+  }
+
+  [data-ui="switch"]:has(> input:checked) [data-ui="switch-track"] {
+    border-color: Highlight;
+    background: Highlight;
+  }
+
+  [data-ui="switch-track"] > span {
+    background: ButtonText;
+  }
+
+  [data-ui="switch"]:has(> input:checked) [data-ui="switch-track"] > span {
+    background: HighlightText;
+  }
+}
+
+/* T048: SegmentedControl (radioryhmä segmentoituna; 2–5 vaihtoehtoa).
+   Natiivi radio piilossa visuaalisesti mutta fokusoitavissa (focus-rengas
+   labeliin :focus-visible-ketjulla); valittu segmentti brand-pinnalla +
+   painavalla tekstillä (ei pelkkä väri — muoto kertoo, §31). */
+[data-ui="segmented"] {
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-card);
+  padding: var(--lifeos-space-sm);
+  margin: 0 0 var(--lifeos-space-md);
+  max-inline-size: var(--lifeos-measure);
+}
+
+[data-ui="segmented"] legend {
+  padding-inline: var(--lifeos-space-2xs);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 700;
+  color: var(--lifeos-color-text);
+}
+
+[data-ui="segmented-options"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-2xs);
+  background: var(--lifeos-color-bg);
+  border-radius: var(--lifeos-radius-control);
+  padding: var(--lifeos-space-2xs);
+}
+
+[data-ui="segmented-option"] {
+  flex: 1 1 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--lifeos-touch-min);
+  min-inline-size: 0;
+  border-radius: var(--lifeos-radius-control);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 500;
+  color: var(--lifeos-color-text);
+  cursor: pointer;
+  transition:
+    background var(--lifeos-motion-base) var(--lifeos-motion-easing),
+    color var(--lifeos-motion-base) var(--lifeos-motion-easing);
+  overflow-wrap: anywhere;
+}
+
+[data-ui="segmented-option"]:hover {
+  background: var(--lifeos-color-surface);
+}
+
+/* T048-korjaus: input EI saa olla pointer-events:none — silloin labelin
+   span kaappaa klikin eikä natiivi radio saa sitä (Playwright .check()
+   aikakatkaistiin). Sen sijaan input on läpinäkyvä mutta klikattava koko
+   labelin alueella (inset:0, ei mittaa). Näppäimistö toimii natiivisti. */
+[data-ui="segmented-option"] {
+  position: relative;
+}
+
+[data-ui="segmented-option"] input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+[data-ui="segmented-option"][data-checked="true"] {
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  font-weight: 700;
+}
+
+[data-ui="segmented-option"]:has(input:focus-visible) {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: var(--lifeos-focus-offset);
+}
+
+[data-ui="segmented"][data-invalid="true"] {
+  border-color: var(--lifeos-color-danger-border);
+  border-width: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[data-ui="icon-button"]:focus-visible,
+[data-ui="fab"]:focus-visible {
+  outline: var(--lifeos-focus-width) solid var(--lifeos-color-accent);
+  outline-offset: var(--lifeos-focus-offset);
+}
+
+@media (min-width: 720px) {
+  [data-ui="rail"] {
+    display: flex;
+    position: sticky;
+    inset-block-start: 0;
+    align-self: flex-start;
+    block-size: 100dvh;
+    max-block-size: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  [data-ui="bottom-nav"] {
+    display: none;
+  }
+
+  /* Desktopissa drawer ei kuulu näkyviin (rail näyttää kaiken);
+     scrim/drawer piiloon vaikka tila jäisi auki leveysvaihdossa. */
+  [data-ui="drawer-scrim"],
+  [data-ui="more-drawer"] {
+    display: none;
+  }
+
+  [data-ui="content-column"] main {
+    padding: var(--lifeos-space-xl);
+  }
+}
+
+/* T050: overlay-perhe (Modal/BottomSheet/Drawer). Juuri on fixed-inset
+   (scrim + dialogi); dialogin sijoittelu variantin + viewportin mukaan:
+   - sheet: mobiilissa alareunan bottom-sheet (radius sheet, 70dvh max,
+     safe-area); desktopissa keskitetty modal (sama kuin modal).
+   - modal: keskitetty kortti (max 32rem) molemmissa.
+   - drawer: sivupaneeli inline-endissä, täysi korkeus, 22rem.
+   Ei JS-viewport-haaraa (pelkkä CSS-media) — ei matchMedia-kuuntelijaa. */
+[data-ui="overlay-root"] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+}
+
+[data-ui="overlay-scrim"] {
+  position: absolute;
+  inset: 0;
+  background: rgb(16 25 21 / 0.45);
+}
+
+[data-ui="overlay-dialog"] {
+  position: relative;
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-sm);
+  max-block-size: 90dvh;
+  overflow-y: auto;
+}
+
+[data-ui="overlay-dialog"][data-variant="sheet"] {
+  margin-block-start: auto;
+  inline-size: 100%;
+  max-block-size: 70dvh;
+  border-start-start-radius: var(--lifeos-radius-sheet);
+  border-start-end-radius: var(--lifeos-radius-sheet);
+  padding: var(--lifeos-space-md);
+  padding-block-end: calc(var(--lifeos-space-md) + env(safe-area-inset-bottom, 0px));
+  box-shadow: var(--lifeos-elevation-3);
+}
+
+[data-ui="overlay-dialog"][data-variant="modal"] {
+  margin: auto;
+  inline-size: calc(100% - var(--lifeos-space-xl));
+  max-inline-size: 32rem;
+  border-radius: var(--lifeos-radius-sheet);
+  padding: var(--lifeos-space-lg);
+  box-shadow: var(--lifeos-elevation-3);
+}
+
+[data-ui="overlay-dialog"][data-variant="drawer"] {
+  margin-inline-start: auto;
+  block-size: 100dvh;
+  inline-size: min(22rem, calc(100% - var(--lifeos-space-xl)));
+  padding: var(--lifeos-space-md);
+  box-shadow: var(--lifeos-elevation-3);
+}
+
+[data-ui="overlay-header"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-md);
+}
+
+[data-ui="overlay-header"] [data-ui="display-section"] {
+  margin: 0;
+}
+
+[data-ui="overlay-description"] {
+  margin: 0;
+  font-size: var(--lifeos-font-sm);
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="overlay-body"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-sm);
+}
+
+/* T217: pika-toiminnot pysyvät suurina, selkeinä valintoina myös mobiilissa. */
+[data-ui="quick-add-list"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="quick-add-list"] button {
+  inline-size: 100%;
+  min-block-size: var(--lifeos-touch-min);
+  padding: var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+[data-ui="quick-add-list"] button:hover {
+  border-color: var(--lifeos-color-accent);
+}
+
+/* T096: hakudialogin sisältö — syöttö + ryhmäotsikot + 44px tulosrivit.
+   Ei omaa visuaalista kieltä: overlay-dialogin pinta, card-log-listien
+   rytmi, teksti perii. Aktiivinen rivi kertoo pinnalla + painolla
+   (ei pelkkä väri, §31). */
+[data-ui="global-search"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="search-group-title"] {
+  font-size: var(--lifeos-font-sm);
+  font-weight: 700;
+  color: var(--lifeos-color-muted);
+  margin: 0 0 var(--lifeos-space-2xs);
+}
+
+[data-ui="search-group-list"] {
+  list-style: none;
+  margin: 0 0 var(--lifeos-space-sm);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2xs);
+}
+
+[data-ui="search-group-list"] button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--lifeos-space-2xs);
+  inline-size: 100%;
+  min-block-size: var(--lifeos-touch-min);
+  padding-inline: var(--lifeos-space-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--lifeos-radius-control);
+  color: var(--lifeos-color-text);
+  font-family: inherit;
+  font-size: var(--lifeos-font-md);
+  text-align: start;
+  cursor: pointer;
+}
+
+[data-ui="search-result-preview"] {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+[data-ui="search-group-list"] button[data-active="true"] {
+  background: var(--lifeos-color-brand);
+  color: var(--lifeos-color-on-brand);
+  font-weight: 700;
+}
+
+[data-ui="search-group-list"] button[data-active="true"] [data-ui="search-result-preview"] {
+  color: var(--lifeos-color-on-brand);
+  opacity: 0.85;
+}
+
+@media (min-width: 720px) {
+  /* Desktop-sheet = keskitetty modal-ilme (T050 viewport-valinta). */
+  [data-ui="overlay-dialog"][data-variant="sheet"] {
+    margin: auto;
+    inline-size: calc(100% - var(--lifeos-space-xl));
+    max-inline-size: 32rem;
+    max-block-size: 90dvh;
+    border-radius: var(--lifeos-radius-sheet);
+    padding: var(--lifeos-space-lg);
+  }
+}
+
+/* T054: motion system (§30: motion kertoo tilasta, ei jatkuvaa koriste-
+   liikettä; brief §7: 120/200/320ms ease-out + opacity-only reduced-
+   motionissa). Presetit data-motion-attribuutilla; merkitykset lukittu
+   motion.ts:n rekisterissä:
+   - rise-in: sisältö saapuu näkymään (mount/reitinvaihto)
+   - fade-in: hiljainen ilmestyminen (ei liikettä)
+   - pop: onnistumis-/valmistumispalaute (kertaluontoinen, palaa lepoon)
+   - slide-up: pinta saapuu käyttäjän teon vastauksena (overlay/toast)
+   Kaikki kertaluontoisia (fill both vain sisääntuloilla, ettei välähdä). */
+@keyframes lifeos-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lifeos-rise-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes lifeos-slide-up {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes lifeos-pop {
+  0% {
+    scale: 1;
+  }
+
+  40% {
+    scale: 1.05;
+  }
+
+  100% {
+    scale: 1;
+  }
+}
+
+[data-motion="fade-in"] {
+  animation: lifeos-fade-in var(--lifeos-motion-base) var(--lifeos-motion-easing) both;
+}
+
+[data-motion="rise-in"] {
+  animation: lifeos-rise-in var(--lifeos-motion-slow) var(--lifeos-motion-easing) both;
+}
+
+[data-motion="slide-up"] {
+  animation: lifeos-slide-up var(--lifeos-motion-slow) var(--lifeos-motion-easing) both;
+}
+
+[data-motion="pop"] {
+  animation: lifeos-pop var(--lifeos-motion-base) var(--lifeos-motion-easing);
+}
+
+/* T054-proben demoerät (näyteikkuna; sama hiljainen pinta kuin stat-chip). */
+[data-ui="motion-demo"] {
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  padding: var(--lifeos-space-sm) var(--lifeos-space-md);
+  margin-block-end: var(--lifeos-space-sm);
+  background: var(--lifeos-color-surface);
+  max-inline-size: var(--lifeos-measure);
+}
+
+/* §30: reduced-motionissa vain opacity (brief §7); ei liikettä.
+   T051: skeleton-pulssi sammuu myös (ei jatkuvaa animaatiota).
+   T054: data-motion-presetit täyttyvät opacity-only-fadeen (attribuutti-
+   selektori voittaa globaalin 0.01ms-killin, joten lyhyt fade jää päälle). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    transition-duration: 0.01ms;
+  }
+
+  [data-ui="skeleton-line"] {
+    animation: none;
+    opacity: 0.7;
+  }
+
+  [data-motion="fade-in"],
+  [data-motion="rise-in"],
+  [data-motion="slide-up"],
+  [data-motion="pop"] {
+    animation-name: lifeos-fade-in;
+    animation-duration: var(--lifeos-motion-fast);
+  }
+
+  [data-ui="bottom-nav"] a,
+  [data-ui="rail"] a,
+  [data-ui="more-button"],
+  [data-ui="more-drawer"] a,
+  [data-ui="icon-button"],
+  [data-ui="fab"],
+  button[data-variant] {
+    transition: opacity var(--lifeos-motion-fast) var(--lifeos-motion-easing);
+  }
+}
+
+@media (max-width: 719px) {
+  [data-ui="goals-overview-header"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  [data-ui="goals-overview-header"] button {
+    align-self: flex-start;
+  }
+
+  [data-ui="goal-intent-grid"],
+  [data-ui="goal-wizard-date-grid"] {
+    grid-template-columns: 1fr;
+  }
+
+  [data-ui="goal-intent-card"] {
+    min-block-size: auto;
+  }
+
+  [data-ui="goal-wizard-steps"] {
+    gap: var(--lifeos-space-2xs);
+  }
+
+  [data-ui="goal-wizard-steps"] li {
+    justify-content: center;
+  }
+
+  [data-ui="goal-wizard-steps"] li > span:last-child {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  [data-ui="goal-wizard-actions"] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  [data-ui="goal-wizard-actions"] > span {
+    display: none;
+  }
+
+  [data-ui="goal-wizard-actions"] button:first-child {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  [data-ui="goal-wizard-actions"] button:last-child {
+    justify-self: stretch;
+  }
+
+  [data-ui="goal-wizard-summary"] dl > div {
+    grid-template-columns: 1fr;
+    gap: var(--lifeos-space-2xs);
+  }
+}
+
+[data-ui="calendar-week-grid"] {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--lifeos-space-sm);
+}
+
+/* T122: viikkoruudukon päiväsolu (keskittymismoodissa piilotetaan tyhjät
+   mobiililla — sisältö näkyy silti ruudunlukijalle aria-live-alueessa). */
+[data-ui="calendar-week-day"] {
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-sm);
+  min-block-size: 4.5rem;
+  padding: var(--lifeos-space-sm);
+  text-align: start;
+  width: 100%;
+}
+
+[data-ui="calendar-week-day"][aria-current="date"] {
+  border-color: var(--lifeos-color-accent);
+}
+
+[data-ui="calendar-week-day"][aria-selected="true"] {
+  border-width: 2px;
+}
+
+/* T122: koko ruudukko fokusrenkaalla klusterinavigoinnille (§31:
+   kbd-Cmd+arrows päivänvaihtoon — ohje Meta-tekstissä). */
+[data-ui="calendar-week-list"] {
+  display: contents;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 640px) {
+  [data-ui="calendar-week-grid"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-ui="calendar-week-day"] {
+    min-block-size: var(--lifeos-touch-min);
+  }
+
+  [data-ui="calendar-week-day"][data-empty="true"] {
+    display: none;
+  }
+}
+
+/* T122: päivälista alla (mobiilissa ainoa näkyvä sisältö + SR-varmistus). */
+[data-ui="calendar-day-summary"] {
+  margin-block-start: var(--lifeos-space-md);
+}
+
+/* T121: päivänäkymän ruudukko (prosenttipohjainen, responsiivinen).
+   Korkeus skaalautuvana: 06–22 = 16 h → 64rem vakio + mobiilin tiivistys.
+   Näkymä ei vaadi pystyscrollbacka mobiilissa kohtuuskääröllä (§31:
+   tärkeä sisältö esillä). */
+[data-ui="calendar-day-grid"] {
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  block-size: 64rem;
+  inline-size: 100%;
+  margin-block-start: var(--lifeos-space-md);
+  position: relative;
+}
+
+@media (max-width: 640px) {
+  [data-ui="calendar-day-grid"] {
+    block-size: 48rem;
+  }
+}
+
+/* T121: tuntirivi (display-kohde, aria-hidden — interaktio vain blockeissa). */
+[data-ui="calendar-hour-tick"] {
+  border-block-start: 1px solid var(--lifeos-color-border);
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+  line-height: var(--lifeos-line-meta);
+  padding: var(--lifeos-space-2xs);
+  position: absolute;
+  inline-size: 100%;
+}
+
+/* T131: pudotusesikatselu (veto paneelista) — ei peitä block-nappeja
+   (T128-veto toimii, §6): absoluuttinen mutta osoittimet läpi, katkoviiva
+   + kehys (ei pelkkä väri §31). */
+
+[data-ui="calendar-drop-preview"] {
+  border: 2px dashed var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-control);
+  padding: var(--lifeos-space-2xs);
+  pointer-events: none;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: 2;
+}
+
+/* T121: block-nappi (Tab + Enter; hover/focus korostus; touch 44px).
+   §31: fokus aina näkyvissä. */
+[data-ui="calendar-block"] {
+  align-items: flex-start;
+  background: var(--lifeos-color-surface);
+  border: 2px solid var(--lifeos-color-accent);
+  border-radius: calc(var(--lifeos-radius-control) - 2px);
+  color: var(--lifeos-color-text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--lifeos-font-sm);
+  gap: var(--lifeos-space-3xs);
+  line-height: var(--lifeos-line-meta);
+  min-block-size: var(--lifeos-touch-min);
+  overflow: hidden;
+  padding: var(--lifeos-space-2xs);
+  position: absolute;
+}
+
+/* T121: nykyhetken viiva + aikaleima (muoto, ei pelkkä väri §31). */
+[data-ui="calendar-now-line"] {
+  border-block-start: 2px solid var(--lifeos-color-danger-border);
+  inline-size: 100%;
+  position: absolute;
+}
+
+[data-ui="calendar-now-indicator"] {
+  color: var(--lifeos-color-danger-text);
+  font-size: var(--lifeos-font-sm);
+  line-height: var(--lifeos-line-meta);
+}
+
+/* T123: kuukausiruudukon päiväsolu — TIHEYS PYSYY LUETTAVANA PIENELLÄ
+   NÄYTÖLLÄ (kriteeri): solut eivät piilotu mobiililla (toisin kuin viikkonäkymän
+   tyhjät solut), vain tiivistetään. Tekstilabeli kertoo tiheyden sanallisesti. */
+[data-ui="calendar-month-day"] {
+  background: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  color: var(--lifeos-color-text);
+  display: flex;
+  flex-direction: column;
+  font-size: var(--lifeos-font-sm);
+  gap: var(--lifeos-space-3xs);
+  line-height: var(--lifeos-line-meta);
+  min-block-size: var(--lifeos-touch-min);
+  padding: var(--lifeos-space-2xs) var(--lifeos-space-sm);
+  text-align: start;
+}
+
+[data-ui="calendar-month-day"][aria-current="date"] {
+  border-color: var(--lifeos-color-accent);
+}
+
+@media (max-width: 640px) {
+  [data-ui="calendar-month-day"] {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+}
+
+/* T106: tag-chip — yhtenäinen tagien visuaalinen esitys (lomake, suodatin,
+   tehtävärivit). Sama pinta kaikissa konteksteissa; interaktiivinen suodatin-
+   nappi saa touch-korkeuden ja pressed-tilan (aria-pressed, ei pelkkä väri). */
+[data-ui="tag-chip-list"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="tag-chip"] {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--lifeos-space-3xs) var(--lifeos-space-sm);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-control);
+  background: var(--lifeos-color-surface);
+  font-size: var(--lifeos-font-sm);
+  font-weight: 500;
+  line-height: var(--lifeos-line-meta);
+  color: var(--lifeos-color-muted);
+}
+
+button[data-ui="tag-chip"] {
+  min-block-size: var(--lifeos-touch-min);
+  cursor: pointer;
+}
+
+button[data-ui="tag-chip"][aria-pressed="true"] {
+  border-color: var(--lifeos-color-accent);
+  color: var(--lifeos-color-text);
+  font-weight: 600;
+}
+
+/* T108: checklist — siirtypainikkeet jakavat saman chevronin (alaspäin
+   käännettynä); editori sisentyy päätehtävän rivin alle. */
+button[data-checklist-move="down"] svg {
+  rotate: 180deg;
+}
+
+[data-ui="task-checklist"] {
+  margin-block-start: var(--lifeos-space-2xs);
+}
+
+[data-ui="task-checklist"] > [data-ui="card-log-list"] {
+  margin-block-end: var(--lifeos-space-2xs);
+}
+
+/* T113: raahauskahva (Pointer Events — hiiri + touch sama polku;
+   näppäimistö käyttää ylös/alas-painikkeita). touch-action none estää
+   sivun skrollauksen vedon aikana; raahatun listan rivit himmenevät
+   hieman (tila näkyy muodolla, ei pelkällä värillä §31). */
+button[data-checklist-handle] {
+  touch-action: none;
+  cursor: grab;
+}
+
+button[data-checklist-handle]:active {
+  cursor: grabbing;
+}
+
+[data-ui="card-log-list"][data-checklist-dragging="true"] > li {
+  opacity: 0.85;
+}

@@ -1,0 +1,123 @@
+[data-ui="health-step-count-intro"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-sm);
+  margin-block-end: var(--lifeos-space-md);
+}
+
+[data-ui="health-step-count-editor"] {
+  max-width: 52rem;
+  margin-block: 0 var(--lifeos-space-lg);
+  padding: var(--lifeos-space-md);
+  border: 1px solid var(--lifeos-color-border);
+  border-inline-start: 4px solid var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-card);
+  background: var(--lifeos-color-bg);
+}
+
+[data-ui="health-step-count-fields"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lifeos-space-sm);
+}
+
+[data-ui="health-step-count-fields"] + [data-ui="field"] {
+  margin-block-start: var(--lifeos-space-sm);
+}
+
+[data-ui="health-step-count-note"] textarea[data-ui="input"] {
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+[data-testid="health-step-count-form"] > [data-ui="meta"],
+[data-testid="health-step-count-form"] > [data-ui="field-error"],
+[data-ui="health-step-count-form-actions"] {
+  margin-block: var(--lifeos-space-sm) 0;
+}
+
+[data-ui="health-step-count-form-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-xs);
+}
+
+[data-ui="health-step-count-latest"] {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  margin: 0;
+  padding: var(--lifeos-space-md);
+  border-inline-start: 3px solid var(--lifeos-color-accent);
+  border-radius: var(--lifeos-radius-control);
+  background: color-mix(in srgb, var(--lifeos-color-accent) 8%, var(--lifeos-color-surface));
+}
+
+[data-ui="health-step-count-latest"] dt {
+  color: var(--lifeos-color-muted);
+  font-size: var(--lifeos-font-sm);
+}
+
+[data-ui="health-step-count-latest"] dd {
+  margin: 0.1rem 0 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-ui="health-step-count-latest"] p {
+  margin: 0;
+  color: var(--lifeos-color-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+[data-ui="health-step-count-history"] {
+  margin-block-start: var(--lifeos-space-lg);
+}
+
+[data-ui="health-step-count-history"] h3 {
+  margin: 0 0 var(--lifeos-space-xs);
+  font-size: var(--lifeos-font-md);
+}
+
+[data-ui="health-step-count-history"] ol {
+  display: grid;
+  gap: var(--lifeos-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-ui="health-step-count-history"] li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--lifeos-space-xs) var(--lifeos-space-md);
+  padding-block: var(--lifeos-space-sm);
+  border-block-start: 1px solid var(--lifeos-color-border);
+}
+
+[data-ui="health-step-count-history"] time {
+  color: var(--lifeos-color-muted);
+}
+
+[data-ui="health-step-count-history"] strong {
+  color: var(--lifeos-color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 719px) {
+  [data-ui="content-column"]:has([data-testid="health-step-count-form"]) [data-ui="fab"] {
+    display: none;
+  }
+}
+
+@media (min-width: 720px) {
+  [data-ui="health-step-count-fields"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+}
