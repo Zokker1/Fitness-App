@@ -92,8 +92,3 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-## Development
-
-This project has been developed with AI assistance, including implementation fixes, testing, and documentation. It is being shared as a portfolio project while development continues.
-
-Local environment files, generated builds, dependencies, and browser databases are excluded from version control. No open-source license has been selected yet.
